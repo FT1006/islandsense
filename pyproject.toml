@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "islandsense"
+version = "0.1.0"
+description = "Per-sailing disruption prediction and 72-hour early warning system for Jersey supply chain"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "pandas>=1.5.0",
+    "numpy>=1.23.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+ml = [
+    "xgboost>=1.7.0",
+    "lightgbm>=3.3.0",
+    "scikit-learn>=1.2.0",
+]
+ui = [
+    "streamlit>=1.20.0",
+]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+]
+
+[tool.setuptools]
+packages = ["islandsense"]
+package-dir = {"" = "src"}
+
+[tool.mypy]
+ignore_missing_imports = true
+no_implicit_optional = true

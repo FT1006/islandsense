@@ -1,0 +1,76 @@
+# config.yaml
+
+project:
+  name: "IslandSense MVP"
+  horizon_hours: 72        # how far ahead the demo looks
+  bin_hours: 6             # discretisation for per-sailing features
+
+data:
+  sailings_file: "sailings.csv"
+  status_file: "status.csv"
+  metocean_file: "metocean.csv"
+  tides_file: "tides.csv"
+  exposure_file: "exposure_by_sailing.csv"   # optional; can be synthetic
+  my_sailings_file: "my_sailings.csv"        # for drill-down / demo
+
+label:
+  disruption_delay_minutes: 120              # delay > 120 min treated as disruption
+
+categories:
+  fresh:
+    label: "Fresh food"
+    exposure_unit_label: "pallets"
+  fuel:
+    label: "Fuel"
+    exposure_unit_label: "trailer-equivalents"
+
+jdi:
+  # Map expected loss (arbitrary units) to a 0–100 JDI, then to bands.
+  # For MVP you can simply normalise E_loss between these thresholds.
+  expected_loss_min: 0.0
+  expected_loss_max: 100.0
+  bands:
+    green:
+      label: "Green"
+      range: [0, 39]
+    amber:
+      label: "Amber"
+      range: [40, 69]
+    red:
+      label: "Red"
+      range: [70, 100]
+
+actions:
+  # Three simple, hard-coded actions; logic is per category over the 72h window.
+  - id: "do_nothing"
+    label: "Do nothing"
+    min_band: "green"
+    shift_fraction: 0.0          # no change
+  - id: "bring_forward"
+    label: "Bring forward some volume"
+    min_band: "amber"
+    shift_fraction: 0.10         # shift 10% of exposure within window
+  - id: "partial_air"
+    label: "Partial air-lift"
+    min_band: "red"
+    shift_fraction: 0.25         # shift 25% of exposure (e.g. 10% forward + 15% air)
+
+impact:
+  # Simple constants to turn "shifted units" into hours / trailers avoided.
+  k_hours_per_unit: 0.25         # demo: each shifted pallet avoids ~0.25h of shelf-gap
+  units_per_trailer: 24          # 1 "trailer-equivalent" = 24 pallets
+
+optimizer:
+  # Very simple capacity guardrails (you can enforce heuristically, no LP required).
+  max_shift_fraction_per_category: 0.30   # never shift more than 30% of a category in 72h
+  max_shift_units_per_window: 200         # soft cap; can be used in warnings only
+
+model:
+  type: "xgboost"                # or "lightgbm" — your choice in code
+  random_seed: 42                # keep runs deterministic for the demo
+  test_size_fraction: 0.2        # simple train/test split
+
+ui:
+  default_window_label: "Next 72 hours"
+  show_what_if_sliders: true
+  show_download_brief: true
