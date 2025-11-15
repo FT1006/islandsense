@@ -342,6 +342,7 @@ def compute_impact(
         impact[category] = {
             "hours_avoided": hours_avoided,
             "trailers_avoided": trailers_avoided,
+            "delta_e_loss": float(delta_e_loss),  # for tuning / logging
         }
 
     return impact
@@ -487,6 +488,14 @@ def aggregate(
         impact = compute_impact(daily_jdi_df, scenario_df, config)
         print(f"    Fresh hours avoided: {impact['fresh']['hours_avoided']:.1f}")
         print(f"    Fuel trailers avoided: {impact['fuel']['trailers_avoided']:.1f}")
+        print(
+            f"    Fresh ΔE_loss: {impact['fresh']['delta_e_loss']:.2f} units "
+            f"(before k_hours_per_unit)"
+        )
+        print(
+            f"    Fuel  ΔE_loss: {impact['fuel']['delta_e_loss']:.2f} units "
+            f"(before units_per_trailer)"
+        )
 
         scenario_results[scenario_id] = scenario_df
         weekly_jdis[scenario_id] = weekly_jdi
