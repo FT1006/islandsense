@@ -2,7 +2,7 @@
 
 import yaml
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 
 class Config:
@@ -20,7 +20,16 @@ class Config:
 
     def _validate(self):
         """Basic validation of required fields."""
-        required_sections = ["project", "data", "label", "categories", "jdi", "actions"]
+        required_sections = [
+            "project",
+            "data",
+            "label",
+            "categories",
+            "jdi",
+            "scenarios",
+            "impact",
+            "model",
+        ]
         for section in required_sections:
             if section not in self._data:
                 raise ValueError(f"Missing required config section: {section}")
@@ -31,12 +40,8 @@ class Config:
         return self._data["project"]["name"]
 
     @property
-    def horizon_hours(self) -> int:
-        return self._data["project"]["horizon_hours"]
-
-    @property
-    def bin_hours(self) -> int:
-        return self._data["project"]["bin_hours"]
+    def horizon_days(self) -> int:
+        return self._data["project"]["horizon_days"]
 
     # Data file paths
     @property
@@ -64,10 +69,6 @@ class Config:
     def exposure_file(self) -> Path:
         return self.data_dir / self._data["data"]["exposure_file"]
 
-    @property
-    def my_sailings_file(self) -> Path:
-        return self.data_dir / self._data["data"]["my_sailings_file"]
-
     # Label settings
     @property
     def disruption_delay_minutes(self) -> int:
@@ -78,23 +79,39 @@ class Config:
     def categories(self) -> Dict[str, Dict[str, str]]:
         return self._data["categories"]
 
-    # JDI bands
+    # JDI settings
     @property
     def jdi_bands(self) -> Dict[str, Dict[str, Any]]:
         return self._data["jdi"]["bands"]
 
     @property
-    def jdi_expected_loss_min(self) -> float:
-        return self._data["jdi"]["expected_loss_min"]
+    def jdi_categories(self) -> Dict[str, Dict[str, float]]:
+        """Get per-category JDI scaling parameters."""
+        return self._data["jdi"]["categories"]
+
+    def jdi_expected_loss_min(self, category: str) -> float:
+        """Get expected_loss_min for a specific category."""
+        return self._data["jdi"]["categories"][category]["expected_loss_min"]
+
+    def jdi_expected_loss_max(self, category: str) -> float:
+        """Get expected_loss_max for a specific category."""
+        return self._data["jdi"]["categories"][category]["expected_loss_max"]
+
+    # Scenarios (replaces old actions)
+    @property
+    def scenarios(self) -> List[Dict[str, Any]]:
+        """Get list of scenario definitions."""
+        return self._data["scenarios"]
 
     @property
-    def jdi_expected_loss_max(self) -> float:
-        return self._data["jdi"]["expected_loss_max"]
+    def recommended_scenario_id(self) -> str:
+        """Get ID of recommended scenario."""
+        return self._data["scenario_selection"]["recommended_id"]
 
-    # Actions
     @property
-    def actions(self) -> list:
-        return self._data["actions"]
+    def auto_select_scenario(self) -> bool:
+        """Whether to auto-select scenario based on delta threshold."""
+        return self._data["scenario_selection"]["auto_select"]
 
     # Impact calculation
     @property
@@ -120,8 +137,8 @@ class Config:
 
     # UI settings
     @property
-    def default_window_label(self) -> str:
-        return self._data["ui"]["default_window_label"]
+    def default_view_label(self) -> str:
+        return self._data["ui"]["default_view_label"]
 
     @property
     def show_what_if_sliders(self) -> bool:

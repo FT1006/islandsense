@@ -209,9 +209,10 @@ def predict(
         ]
     ].copy()
 
-    # Add etd_bin
+    # Add etd_bin (6-hour bins for backwards compatibility)
+    bin_hours = 6  # Hardcoded; not used in 7-day design but kept for M3 schema
     predictions_df["etd_bin"] = predictions_df[SailingColumns.ETD_ISO].apply(
-        lambda x: compute_etd_bin(x, config.bin_hours)
+        lambda x: compute_etd_bin(x, bin_hours)
     )
 
     # Add predictions

@@ -1,9 +1,8 @@
-# config.yaml
+# config.yaml - IslandSense MVP (7-day early warning design)
 
 project:
   name: "IslandSense MVP"
-  horizon_hours: 72        # how far ahead the demo looks
-  bin_hours: 6             # discretisation for per-sailing features
+  horizon_days: 7          # how far ahead the demo looks (calendar days)
 
 data:
   sailings_file: "sailings.csv"
@@ -11,7 +10,6 @@ data:
   metocean_file: "metocean.csv"
   tides_file: "tides.csv"
   exposure_file: "exposure_by_sailing.csv"   # optional; can be synthetic
-  my_sailings_file: "my_sailings.csv"        # for drill-down / demo
 
 label:
   disruption_delay_minutes: 120              # delay > 120 min treated as disruption
@@ -25,10 +23,13 @@ categories:
     exposure_unit_label: "trailer-equivalents"
 
 jdi:
-  # Map expected loss (arbitrary units) to a 0–100 JDI, then to bands.
-  # For MVP you can simply normalise E_loss between these thresholds.
-  expected_loss_min: 0.0
-  expected_loss_max: 100.0
+  categories:
+    fresh:
+      expected_loss_min: 0.0
+      expected_loss_max: 100.0
+    fuel:
+      expected_loss_min: 0.0
+      expected_loss_max: 100.0
   bands:
     green:
       label: "Green"
@@ -40,50 +41,39 @@ jdi:
       label: "Red"
       range: [70, 100]
 
-actions:
-  # Three simple, hard-coded actions; logic is per category over the 72h window.
-  - id: "do_nothing"
-    label: "Do nothing"
-    min_band: "green"
-    shift_fraction: 0.0          # no change
-  - id: "bring_forward"
-    label: "Bring forward some volume"
-    min_band: "amber"
-    shift_fraction: 0.10         # shift 10% of exposure within window
-  - id: "partial_air"
-    label: "Partial air-lift"
-    min_band: "red"
-    shift_fraction: 0.25         # shift 25% of exposure (e.g. 10% forward + 15% air)
+scenarios:
+  - id: "scenario_A"
+    name: "Bring forward 10%"
+    alpha:
+      fresh: 0.20      # 20% effective reduction in E_loss for Fresh
+      fuel: 0.15
+  - id: "scenario_B"
+    name: "Bring forward 10% + air-lift 5%"
+    alpha:
+      fresh: 0.30
+      fuel: 0.25
+
+scenario_selection:
+  recommended_id: "scenario_A"   # MVP: always recommend A, show B as alternative
+  auto_select: false             # no automatic Δ-threshold logic in MVP
 
 impact:
-  # Simple constants to turn "shifted units" into hours / trailers avoided.
-  k_hours_per_unit: 0.25         # demo: each shifted pallet avoids ~0.25h of shelf-gap
-  units_per_trailer: 24          # 1 "trailer-equivalent" = 24 pallets
-
-optimizer:
-  # Very simple capacity guardrails (you can enforce heuristically, no LP required).
-  max_shift_fraction_per_category: 0.30   # never shift more than 30% of a category in 72h
-  max_shift_units_per_window: 200         # soft cap; can be used in warnings only
+  k_hours_per_unit: 0.25         # each shifted Fresh unit avoids ~0.25h of shelf-gap
+  units_per_trailer: 24          # 1 "trailer-equivalent" = 24 units
 
 model:
-  type: "xgboost"                # or "lightgbm" — your choice in code
-  random_seed: 42                # keep runs deterministic for the demo
-  test_size_fraction: 0.2        # simple train/test split
-
-  # Training hyperparameters (minimal, sane defaults for hackathon)
+  type: "xgboost"
+  random_seed: 42
+  test_size_fraction: 0.2
   training:
-    max_depth: 3                 # Shallow trees to avoid overfitting
-    learning_rate: 0.05          # Slow learning
-    n_estimators: 100            # Moderate ensemble size
-    scale_pos_weight: 29.0       # Handle 3.35% class imbalance (~1241/43)
-
-    # Monotonic constraints (order: WOTDI, BSEF, gust_max_3h, tide_gate_margin, prior_24h_delay, day_of_week, month)
-    # 1 = higher feature → higher disruption risk
-    # -1 = lower feature → higher disruption risk
-    # 0 = no constraint
+    max_depth: 3
+    learning_rate: 0.05
+    n_estimators: 100
+    scale_pos_weight: 29.0
+    # Monotonic constraints: [WOTDI, BSEF, gust_max_3h, tide_gate_margin, prior_24h_delay, day_of_week, month]
     monotone_constraints: [1, 1, 1, -1, 1, 0, 0]
 
 ui:
-  default_window_label: "Next 72 hours"
-  show_what_if_sliders: true
+  default_view_label: "7-day risk"
+  show_what_if_sliders: false    # sliders are gone in the 7-day design
   show_download_brief: true
