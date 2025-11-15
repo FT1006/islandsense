@@ -1,35 +1,423 @@
 """Feature engineering for IslandSense MVP.
 
 Computes physics-based features (WOTDI, BSEF, etc.) from raw sailing data.
-To be implemented in M1.
+All formulas match synth.py to ensure feature parity with label generation.
 """
 
+import numpy as np
+import pandas as pd
+from datetime import timedelta
+from typing import Optional
 
-def compute_features(sailings_df, metocean_df, tides_df):
+from islandsense.schema import (
+    SailingColumns,
+    StatusColumns,
+    MetoceanColumns,
+    TideColumns,
+)
+
+
+# ============================================================================
+# Helper Functions
+# ============================================================================
+
+
+def wrap_angle(deg: float) -> float:
+    """Wrap angle to [-180, 180] range."""
+    while deg > 180:
+        deg -= 360
+    while deg < -180:
+        deg += 360
+    return deg
+
+
+def _index_by_timestamp(df: pd.DataFrame, ts_col: str) -> pd.DataFrame:
+    """Convert timestamp column to datetime and index for fast lookups."""
+    df_indexed = df.copy()
+    df_indexed["ts"] = pd.to_datetime(df_indexed[ts_col])
+    df_indexed = df_indexed.set_index("ts").sort_index()
+    return df_indexed
+
+
+def _get_nearest_row(etd: pd.Timestamp, df_indexed: pd.DataFrame) -> pd.Series:
+    """Get nearest row from indexed DataFrame (nearest hour)."""
+    nearest_idx = df_indexed.index.get_indexer([etd], method="nearest")[0]
+    return df_indexed.iloc[nearest_idx]
+
+
+# ============================================================================
+# Physics Features (matching synth.py formulas exactly)
+# ============================================================================
+
+
+def compute_BSEF(metocean_df: pd.DataFrame, sailings_df: pd.DataFrame) -> pd.Series:
     """
-    Compute per-sailing feature matrix.
+    Compute Beam-Sea Exposure Factor per sailing.
 
-    Features to implement (M1):
-    - WOTDI: wind-tide misalignment index
-    - BSEF: beam-sea exposure factor
-    - gust_max_3h: max gust in prior 3 hours
-    - tide_gate_margin: time to next low tide
-    - day_of_week, month: temporal features
-    - prior_24h_delay: historical context
+    Formula (from synth.py:273-274):
+        rel_wave_deg = wrap_angle(wave_dir_deg - head_deg)
+        bsef = abs(sin(radians(rel_wave_deg))) * hs_m
+
+    Higher when waves are perpendicular to vessel heading (beam sea).
 
     Returns:
-        pd.DataFrame with features per sailing
+        pd.Series indexed by sailing_id
     """
-    raise NotImplementedError("To be implemented in M1")
+    metocean_indexed = _index_by_timestamp(metocean_df, MetoceanColumns.TS_ISO)
+
+    bsef_values = []
+    sailing_ids = []
+
+    for _, sailing in sailings_df.iterrows():
+        etd = pd.to_datetime(sailing[SailingColumns.ETD_ISO])
+        head_deg = sailing[SailingColumns.HEAD_DEG]
+
+        metocean_row = _get_nearest_row(etd, metocean_indexed)
+
+        wave_dir_deg = metocean_row[MetoceanColumns.WAVE_DIR_DEG]
+        hs_m = metocean_row[MetoceanColumns.HS_M]
+
+        # BSEF formula
+        rel_wave_deg = wrap_angle(wave_dir_deg - head_deg)
+        bsef = abs(np.sin(np.radians(rel_wave_deg))) * hs_m
+
+        bsef_values.append(bsef)
+        sailing_ids.append(sailing[SailingColumns.SAILING_ID])
+
+    return pd.Series(bsef_values, index=sailing_ids, name="BSEF")
 
 
-def create_label(status_df, disruption_delay_minutes=120):
+def compute_WOTDI(metocean_df: pd.DataFrame, sailings_df: pd.DataFrame) -> pd.Series:
+    """
+    Compute Wind-Tide Directional Index (simplified as wind-heading misalignment).
+
+    Formula (from synth.py:277-278):
+        rel_wind_deg = wrap_angle(wind_dir_deg - head_deg)
+        wotdi = abs(sin(radians(rel_wind_deg))) * (wind_kts / 20.0)
+
+    Note: True tide flow direction not available; using wind-heading proxy.
+
+    Returns:
+        pd.Series indexed by sailing_id
+    """
+    metocean_indexed = _index_by_timestamp(metocean_df, MetoceanColumns.TS_ISO)
+
+    wotdi_values = []
+    sailing_ids = []
+
+    for _, sailing in sailings_df.iterrows():
+        etd = pd.to_datetime(sailing[SailingColumns.ETD_ISO])
+        head_deg = sailing[SailingColumns.HEAD_DEG]
+
+        metocean_row = _get_nearest_row(etd, metocean_indexed)
+
+        wind_dir_deg = metocean_row[MetoceanColumns.WIND_DIR_DEG]
+        wind_kts = metocean_row[MetoceanColumns.WIND_KTS]
+
+        # WOTDI formula
+        rel_wind_deg = wrap_angle(wind_dir_deg - head_deg)
+        wotdi = abs(np.sin(np.radians(rel_wind_deg))) * (wind_kts / 20.0)
+
+        wotdi_values.append(wotdi)
+        sailing_ids.append(sailing[SailingColumns.SAILING_ID])
+
+    return pd.Series(wotdi_values, index=sailing_ids, name="WOTDI")
+
+
+def compute_gust_max_3h(
+    metocean_df: pd.DataFrame, sailings_df: pd.DataFrame
+) -> pd.Series:
+    """
+    Compute maximum gust speed in prior 3 hours before departure.
+
+    Returns:
+        pd.Series indexed by sailing_id
+    """
+    metocean_indexed = _index_by_timestamp(metocean_df, MetoceanColumns.TS_ISO)
+
+    gust_max_values = []
+    sailing_ids = []
+
+    for _, sailing in sailings_df.iterrows():
+        etd = pd.to_datetime(sailing[SailingColumns.ETD_ISO])
+
+        # Query 3-hour window: [ETD - 3h, ETD]
+        start_time = etd - timedelta(hours=3)
+        window_data = metocean_indexed[
+            (metocean_indexed.index >= start_time) & (metocean_indexed.index <= etd)
+        ]
+
+        if len(window_data) == 0:
+            # Fallback: use nearest point if no data in window
+            metocean_row = _get_nearest_row(etd, metocean_indexed)
+            gust_max = metocean_row[MetoceanColumns.GUST_KTS]
+        else:
+            gust_max = window_data[MetoceanColumns.GUST_KTS].max()
+
+        gust_max_values.append(gust_max)
+        sailing_ids.append(sailing[SailingColumns.SAILING_ID])
+
+    return pd.Series(gust_max_values, index=sailing_ids, name="gust_max_3h")
+
+
+# ============================================================================
+# Temporal Features
+# ============================================================================
+
+
+def compute_tide_gate_margin(
+    tides_df: pd.DataFrame, sailings_df: pd.DataFrame
+) -> pd.Series:
+    """
+    Compute minutes until next low tide after departure.
+
+    Returns:
+        pd.Series indexed by sailing_id (continuous, in minutes)
+    """
+    tides_indexed = _index_by_timestamp(tides_df, TideColumns.TS_ISO)
+
+    margin_values = []
+    sailing_ids = []
+
+    for _, sailing in sailings_df.iterrows():
+        etd = pd.to_datetime(sailing[SailingColumns.ETD_ISO])
+
+        # Filter tides after ETD (next 24h)
+        future_tides = tides_indexed[
+            (tides_indexed.index > etd)
+            & (tides_indexed.index <= etd + timedelta(hours=24))
+        ]
+
+        if len(future_tides) < 2:
+            # Not enough data to find low tide
+            margin_minutes = 1440  # Sentinel: 24h
+        else:
+            # Find local minima in tide_m (low tides)
+            tide_heights = future_tides[TideColumns.TIDE_M].values
+            tide_times = future_tides.index
+
+            # Simple approach: find first global minimum in next 24h
+            min_idx = np.argmin(tide_heights)
+            next_low_tide_time = tide_times[min_idx]
+
+            # Calculate minutes to low tide
+            margin_minutes = (next_low_tide_time - etd).total_seconds() / 60
+
+        margin_values.append(margin_minutes)
+        sailing_ids.append(sailing[SailingColumns.SAILING_ID])
+
+    return pd.Series(margin_values, index=sailing_ids, name="tide_gate_margin")
+
+
+def compute_prior_24h_delay(
+    status_df: pd.DataFrame, sailings_df: pd.DataFrame
+) -> pd.Series:
+    """
+    Compute mean delay of sailings on same route in prior 24 hours.
+
+    Returns:
+        pd.Series indexed by sailing_id
+    """
+    # Prepare status with sailing info
+    sailings_with_status = sailings_df.merge(
+        status_df, on=SailingColumns.SAILING_ID, how="left"
+    )
+    sailings_with_status["etd"] = pd.to_datetime(
+        sailings_with_status[SailingColumns.ETD_ISO]
+    )
+
+    prior_delay_values = []
+    sailing_ids = []
+
+    for _, sailing in sailings_df.iterrows():
+        etd = pd.to_datetime(sailing[SailingColumns.ETD_ISO])
+        route = sailing[SailingColumns.ROUTE]
+        sailing_id = sailing[SailingColumns.SAILING_ID]
+
+        # Filter: same route, ETD in [current_ETD - 24h, current_ETD)
+        prior_sailings = sailings_with_status[
+            (sailings_with_status[SailingColumns.ROUTE] == route)
+            & (sailings_with_status["etd"] >= etd - timedelta(hours=24))
+            & (sailings_with_status["etd"] < etd)
+            & (sailings_with_status[SailingColumns.SAILING_ID] != sailing_id)
+        ]
+
+        if len(prior_sailings) == 0:
+            # No prior sailings on this route
+            mean_delay = 0.0
+        else:
+            mean_delay = prior_sailings[StatusColumns.DELAY_MIN].mean()
+            if pd.isna(mean_delay):
+                mean_delay = 0.0
+
+        prior_delay_values.append(mean_delay)
+        sailing_ids.append(sailing_id)
+
+    return pd.Series(prior_delay_values, index=sailing_ids, name="prior_24h_delay")
+
+
+# ============================================================================
+# Main Feature Computation
+# ============================================================================
+
+
+def compute_features(
+    sailings_df: pd.DataFrame,
+    metocean_df: pd.DataFrame,
+    tides_df: pd.DataFrame,
+    status_df: Optional[pd.DataFrame] = None,
+) -> pd.DataFrame:
+    """
+    Compute per-sailing feature matrix with all physics and temporal features.
+
+    Features:
+    - WOTDI: wind-heading misalignment index
+    - BSEF: beam-sea exposure factor
+    - gust_max_3h: max gust in prior 3 hours
+    - tide_gate_margin: minutes to next low tide
+    - prior_24h_delay: mean delay on same route in prior 24h (if status_df provided)
+    - day_of_week: 0=Monday, 6=Sunday
+    - month: 1-12
+
+    Returns:
+        pd.DataFrame with sailing_id + all feature columns
+    """
+    print("Computing features...")
+
+    # Compute physics features
+    print("  [1/7] Computing WOTDI...")
+    wotdi = compute_WOTDI(metocean_df, sailings_df)
+
+    print("  [2/7] Computing BSEF...")
+    bsef = compute_BSEF(metocean_df, sailings_df)
+
+    print("  [3/7] Computing gust_max_3h...")
+    gust_max_3h = compute_gust_max_3h(metocean_df, sailings_df)
+
+    print("  [4/7] Computing tide_gate_margin...")
+    tide_margin = compute_tide_gate_margin(tides_df, sailings_df)
+
+    # Compute temporal features
+    print("  [5/7] Computing calendar features...")
+    sailings_df["etd"] = pd.to_datetime(sailings_df[SailingColumns.ETD_ISO])
+    day_of_week = sailings_df["etd"].dt.dayofweek
+    month = sailings_df["etd"].dt.month
+
+    # Compute historical features
+    print("  [6/7] Computing prior_24h_delay...")
+    if status_df is not None:
+        prior_delay = compute_prior_24h_delay(status_df, sailings_df)
+    else:
+        prior_delay = pd.Series(
+            0.0, index=sailings_df[SailingColumns.SAILING_ID], name="prior_24h_delay"
+        )
+
+    # Combine into DataFrame
+    print("  [7/7] Assembling feature matrix...")
+    features_df = pd.DataFrame(
+        {
+            "sailing_id": sailings_df[SailingColumns.SAILING_ID].values,
+            "WOTDI": wotdi.values,
+            "BSEF": bsef.values,
+            "gust_max_3h": gust_max_3h.values,
+            "tide_gate_margin": tide_margin.values,
+            "prior_24h_delay": prior_delay.values,
+            "day_of_week": day_of_week.values,
+            "month": month.values,
+        }
+    )
+
+    # Fail-fast: check for NaN values
+    nan_count = features_df.isna().sum().sum()
+    if nan_count > 0:
+        print(f"\n[ERROR] Features contain {nan_count} NaN values:")
+        print(features_df.isna().sum())
+        raise ValueError("Features contain NaN values. Check data quality.")
+
+    print(f"[OK] Features computed: {features_df.shape}")
+    return features_df
+
+
+def create_label(
+    status_df: pd.DataFrame, disruption_delay_minutes: int = 120
+) -> pd.Series:
     """
     Create binary disruption label from status.
 
     disruption = 1 if (status == "cancelled") OR (delay_min > threshold)
 
     Returns:
-        pd.Series with disruption labels
+        pd.Series with sailing_id index, values 0/1
     """
-    raise NotImplementedError("To be implemented in M1")
+    disrupted = (status_df[StatusColumns.STATUS] == "cancelled") | (
+        status_df[StatusColumns.DELAY_MIN] > disruption_delay_minutes
+    )
+
+    label = disrupted.astype(int)
+
+    return pd.Series(
+        label.values, index=status_df[SailingColumns.SAILING_ID], name="disruption"
+    )
+
+
+# ============================================================================
+# Feature Validation
+# ============================================================================
+
+
+def validate_features(features_df: pd.DataFrame) -> None:
+    """Print sanity checks for computed features."""
+    print("\n" + "=" * 80)
+    print("Feature Validation Summary")
+    print("=" * 80)
+
+    for col in features_df.columns:
+        if col == "sailing_id":
+            continue
+        print(f"\n{col}:")
+        print(f"  min:  {features_df[col].min():.3f}")
+        print(f"  mean: {features_df[col].mean():.3f}")
+        print(f"  max:  {features_df[col].max():.3f}")
+        print(f"  null: {features_df[col].isna().sum()}")
+
+    # Specific physics checks
+    print("\n" + "=" * 80)
+    print("Physics Sanity Checks:")
+    print("=" * 80)
+
+    # BSEF should be [0, ~5] (can't exceed max wave height * 1.0)
+    bsef_max = features_df["BSEF"].max()
+    if bsef_max > 10:
+        print(f"[WARNING] BSEF max = {bsef_max:.2f} > 10 (check formula)")
+    else:
+        print(f"[OK] BSEF in reasonable range [0, {bsef_max:.2f}]")
+
+    # WOTDI should be [0, ~2.5] (max wind ~50kts / 20 = 2.5)
+    wotdi_max = features_df["WOTDI"].max()
+    if wotdi_max > 5:
+        print(f"[WARNING] WOTDI max = {wotdi_max:.2f} > 5 (check formula)")
+    else:
+        print(f"[OK] WOTDI in reasonable range [0, {wotdi_max:.2f}]")
+
+    # gust_max_3h should be >= 0
+    if (features_df["gust_max_3h"] >= 0).all():
+        print("[OK] gust_max_3h >= 0 for all sailings")
+    else:
+        print("[WARNING] gust_max_3h has negative values")
+
+    # tide_gate_margin should be [0, 1440] minutes
+    tide_min = features_df["tide_gate_margin"].min()
+    tide_max = features_df["tide_gate_margin"].max()
+    if tide_min < 0:
+        print(f"[WARNING] tide_gate_margin min = {tide_min:.1f} < 0")
+    if tide_max > 1440:
+        print(f"[WARNING] tide_gate_margin max = {tide_max:.1f} > 1440 (24h sentinel)")
+    print(f"[OK] tide_gate_margin range: [{tide_min:.1f}, {tide_max:.1f}] minutes")
+
+    # prior_24h_delay should be >= 0
+    if (features_df["prior_24h_delay"] >= 0).all():
+        print("[OK] prior_24h_delay >= 0 for all sailings")
+    else:
+        print("[WARNING] prior_24h_delay has negative values")
+
+    print("=" * 80)
