@@ -61,6 +61,41 @@ impact:
   k_hours_per_unit: 0.25         # each shifted Fresh unit avoids ~0.25h of shelf-gap
   units_per_trailer: 24          # 1 "trailer-equivalent" = 24 units
 
+# === M1.5: Prescriptive Economics (Config-Only) ===
+# These parameters enable the optional tiny optimiser (M2.5) to compute
+# scenario alphas by trading off penalty avoided vs action cost.
+# If optimiser is not enabled, the static scenario alphas above are used.
+
+costs:
+  fresh:
+    penalty_gap_per_unit_hour: 10.0      # £ per pallet-hour of shelf gap
+    bring_forward_per_unit: 1.0          # £ per pallet brought forward
+    air_per_unit: 4.0                    # £ per pallet air-lifted
+  fuel:
+    penalty_gap_per_trailer: 50.0        # £ per trailer-equivalent at risk
+    bring_forward_per_unit: 2.0          # £ per trailer brought forward
+    air_per_unit: 10.0                   # £ per trailer air-lifted (may be unused)
+
+shift_limits:
+  fresh:
+    max_forward_fraction: 0.30           # max 30% of fresh volume can be brought forward
+    max_air_fraction: 0.15               # max 15% of fresh volume can be air-lifted
+  fuel:
+    max_forward_fraction: 0.30           # max 30% of fuel volume can be brought forward
+    max_air_fraction: 0.10               # max 10% of fuel volume can be air-lifted
+
+budgets:
+  fresh_air_units_per_week: 200.0        # soft cap on air-lifted fresh units/week
+  fresh_forward_units_per_week: 600.0    # soft cap on brought-forward fresh units/week
+  # fuel budgets optional for MVP
+
+optimiser:
+  enabled: false                         # set to true to use optimiser instead of static alphas
+  grid_forward: [0.0, 0.10, 0.20, 0.30]  # forward fraction grid to search
+  grid_air: [0.0, 0.05, 0.10, 0.15]      # air fraction grid to search
+  beta_forward: 0.5                      # effectiveness coefficient for forward shift
+  beta_air: 0.9                          # effectiveness coefficient for air lift
+
 model:
   type: "xgboost"
   random_seed: 42
