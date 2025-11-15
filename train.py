@@ -14,7 +14,6 @@ import pickle
 from datetime import datetime
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.isotonic import IsotonicRegression
@@ -45,13 +44,13 @@ def load_dataset(config, quick_mode: bool = False) -> pd.DataFrame:
 
 
 def prepare_features(df: pd.DataFrame):
-    """Split dataset into train/val features and labels.
+    """Split dataset into train/calib/test features and labels.
 
     Args:
-        df: Dataset with split column
+        df: Dataset with split column (train/calib/test)
 
     Returns:
-        (X_train, X_val, y_train, y_val, routes_train, routes_val)
+        (X_train, X_calib, X_test, y_train, y_calib, y_test, routes_test)
     """
     # Feature columns (7 features)
     feature_cols = [
@@ -64,27 +63,32 @@ def prepare_features(df: pd.DataFrame):
         "month",
     ]
 
-    # Split by split column
+    # THREE-WAY SPLIT to avoid calibration leakage
     train_df = df[df["split"] == "train"].copy()
-    val_df = df[df["split"] == "val"].copy()
+    calib_df = df[df["split"] == "calib"].copy()
+    test_df = df[df["split"] == "test"].copy()
 
     X_train = train_df[feature_cols].values
-    X_val = val_df[feature_cols].values
+    X_calib = calib_df[feature_cols].values
+    X_test = test_df[feature_cols].values
 
     y_train = train_df["disruption"].values
-    y_val = val_df["disruption"].values
+    y_calib = calib_df["disruption"].values
+    y_test = test_df["disruption"].values
 
-    routes_train = train_df["route"].values
-    routes_val = val_df["route"].values
+    routes_test = test_df["route"].values
 
     print(
         f"Train set: {len(X_train)} samples ({y_train.sum()} disruptions, {y_train.mean():.1%})"
     )
     print(
-        f"Val set:   {len(X_val)} samples ({y_val.sum()} disruptions, {y_val.mean():.1%})"
+        f"Calib set: {len(X_calib)} samples ({y_calib.sum()} disruptions, {y_calib.mean():.1%})"
+    )
+    print(
+        f"Test set:  {len(X_test)} samples ({y_test.sum()} disruptions, {y_test.mean():.1%})"
     )
 
-    return X_train, X_val, y_train, y_val, routes_train, routes_val
+    return X_train, X_calib, X_test, y_train, y_calib, y_test, routes_test
 
 
 def train_model(X_train, y_train, config):
@@ -136,54 +140,59 @@ def train_model(X_train, y_train, config):
     return model
 
 
-def calibrate_model(model, X_val, y_val):
-    """Apply isotonic regression calibration.
+def calibrate_model(model, X_calib, y_calib):
+    """Apply isotonic regression calibration on CALIB set.
+
+    IMPORTANT: This uses a separate calibration set, NOT the test set,
+    to avoid calibration leakage.
 
     Args:
         model: Trained XGBoost model
-        X_val: Validation features
-        y_val: Validation labels
+        X_calib: Calibration features (separate from train and test)
+        y_calib: Calibration labels
 
     Returns:
         Calibrator (IsotonicRegression instance)
     """
-    print("\nCalibrating model (isotonic regression)...")
+    print("\nCalibrating model (isotonic regression on CALIB set)...")
 
-    # Get uncalibrated probabilities
-    y_prob_uncal = model.predict_proba(X_val)[:, 1]
+    # Get uncalibrated probabilities from calib set
+    y_prob_uncal = model.predict_proba(X_calib)[:, 1]
 
-    # Fit isotonic calibrator
+    # Fit isotonic calibrator on calib set
     calibrator = IsotonicRegression(out_of_bounds="clip")
-    calibrator.fit(y_prob_uncal, y_val)
+    calibrator.fit(y_prob_uncal, y_calib)
 
-    print("  [OK] Calibrator fitted")
+    print("  [OK] Calibrator fitted on calib set (no leakage)")
     return calibrator
 
 
-def evaluate(model, calibrator, X_val, y_val, baseline_brier: float = 0.077):
-    """Evaluate model on validation set.
+def evaluate(model, calibrator, X_test, y_test, baseline_brier: float = 0.077):
+    """Evaluate model on TEST set (never seen before).
+
+    IMPORTANT: Test set was not used for training OR calibration.
 
     Args:
         model: Trained model
-        calibrator: Fitted calibrator
-        X_val: Validation features
-        y_val: Validation labels
+        calibrator: Fitted calibrator (fitted on calib set)
+        X_test: Test features (held out, never touched)
+        y_test: Test labels
         baseline_brier: Baseline Brier score to compare against
 
     Returns:
         Dictionary of metrics
     """
-    print("\nEvaluating on validation set...")
+    print("\nEvaluating on TEST set (held out, never touched)...")
 
-    # Get probabilities
-    y_prob_uncal = model.predict_proba(X_val)[:, 1]
+    # Get probabilities on test set
+    y_prob_uncal = model.predict_proba(X_test)[:, 1]
     y_prob_cal = calibrator.transform(y_prob_uncal)
 
     # Compute metrics (using calibrated probabilities)
-    brier = brier_score_loss(y_val, y_prob_cal)
-    logloss = log_loss(y_val, y_prob_cal)
-    auc = roc_auc_score(y_val, y_prob_cal)
-    ece = expected_calibration_error(y_val, y_prob_cal, n_bins=5)
+    brier = brier_score_loss(y_test, y_prob_cal)
+    logloss = log_loss(y_test, y_prob_cal)
+    auc = roc_auc_score(y_test, y_prob_cal)
+    ece = expected_calibration_error(y_test, y_prob_cal, n_bins=5)
 
     # Compare to baseline
     beats_baseline = brier < baseline_brier
@@ -229,7 +238,7 @@ def evaluate(model, calibrator, X_val, y_val, baseline_brier: float = 0.077):
     print("=" * 70)
 
     # Print calibration bins
-    print_calibration_bins(y_val, y_prob_cal, n_bins=5)
+    print_calibration_bins(y_test, y_prob_cal, n_bins=5)
 
     return metrics
 
@@ -309,17 +318,19 @@ def main():
     df = load_dataset(config, quick_mode=args.quick)
 
     # Prepare features
-    X_train, X_val, y_train, y_val, routes_train, routes_val = prepare_features(df)
+    X_train, X_calib, X_test, y_train, y_calib, y_test, routes_test = prepare_features(
+        df
+    )
 
     # Train model
     model = train_model(X_train, y_train, config)
 
     # Calibrate
-    calibrator = calibrate_model(model, X_val, y_val)
+    calibrator = calibrate_model(model, X_calib, y_calib)
 
     # Evaluate
     baseline_brier = 0.077  # From M1.P3
-    metrics = evaluate(model, calibrator, X_val, y_val, baseline_brier)
+    metrics = evaluate(model, calibrator, X_test, y_test, baseline_brier)
 
     # Save artifacts
     save_artifacts(model, calibrator, metrics, config)

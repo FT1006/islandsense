@@ -83,31 +83,52 @@ def main():
     print(f"  [OK] Training table shape: {train_df.shape}")
     print(f"  Columns: {list(train_df.columns)}")
 
-    # Step 5b: Add train/val split (date-based, not random)
-    print("\n[Step 5b] Adding train/val split (date-based)...")
+    # Step 5b: Add train/calib/test split (date-based, not random)
+    # THREE-WAY SPLIT to avoid calibration leakage
+    print("\n[Step 5b] Adding train/calib/test split (date-based)...")
     train_df["etd"] = pd.to_datetime(train_df["etd_iso"])
     train_df = train_df.sort_values("etd").reset_index(drop=True)
 
-    # 80/20 split based on chronological order
-    split_idx = int(len(train_df) * 0.8)
-    train_df["split"] = "train"
-    train_df.loc[split_idx:, "split"] = "val"
+    # 70/15/15 split based on chronological order
+    train_idx = int(len(train_df) * 0.70)
+    calib_idx = int(len(train_df) * 0.85)  # 70% + 15% = 85%
 
-    split_date = train_df.loc[split_idx, "etd"]
+    train_df["split"] = "train"
+    train_df.loc[train_idx:calib_idx, "split"] = "calib"
+    train_df.loc[calib_idx:, "split"] = "test"
+
+    train_date = (
+        train_df.loc[train_idx, "etd"]
+        if train_idx < len(train_df)
+        else train_df.iloc[-1]["etd"]
+    )
+    calib_date = (
+        train_df.loc[calib_idx, "etd"]
+        if calib_idx < len(train_df)
+        else train_df.iloc[-1]["etd"]
+    )
+
     train_count = (train_df["split"] == "train").sum()
-    val_count = (train_df["split"] == "val").sum()
+    calib_count = (train_df["split"] == "calib").sum()
+    test_count = (train_df["split"] == "test").sum()
 
     print(
-        f"  Train: {train_count} sailings ({train_count / len(train_df):.1%}) - up to {split_date.date()}"
+        f"  Train: {train_count} sailings ({train_count / len(train_df):.1%}) - up to {train_date.date()}"
     )
     print(
-        f"  Val:   {val_count} sailings ({val_count / len(train_df):.1%}) - from {split_date.date()} onwards"
+        f"  Calib: {calib_count} sailings ({calib_count / len(train_df):.1%}) - {train_date.date()} to {calib_date.date()}"
+    )
+    print(
+        f"  Test:  {test_count} sailings ({test_count / len(train_df):.1%}) - from {calib_date.date()} onwards"
     )
     print(
         f"  Train disruption rate: {train_df[train_df['split'] == 'train']['disruption'].mean():.1%}"
     )
     print(
-        f"  Val disruption rate:   {train_df[train_df['split'] == 'val']['disruption'].mean():.1%}"
+        f"  Calib disruption rate: {train_df[train_df['split'] == 'calib']['disruption'].mean():.1%}"
+    )
+    print(
+        f"  Test disruption rate:  {train_df[train_df['split'] == 'test']['disruption'].mean():.1%}"
     )
 
     # Step 6: Validate features
@@ -122,9 +143,9 @@ def main():
     print("\n[Step 8/9] Evaluating baseline heuristic (physics rule without ML)...")
     from sklearn.metrics import brier_score_loss, log_loss, accuracy_score
 
-    # Get validation set
-    val_df = train_df[train_df["split"] == "val"].copy()
-    y_true = val_df["disruption"].values
+    # Get TEST set (never used for training or calibration)
+    test_df = train_df[train_df["split"] == "test"].copy()
+    y_true = test_df["disruption"].values
 
     # Baseline heuristic: Disrupted if (BSEF > threshold) OR (gust_max_3h > threshold)
     # Tune thresholds on train set to be reasonable (not optimized, just sensible)
@@ -133,7 +154,7 @@ def main():
 
     # Simple rule: predict disruption = 1 if either threshold exceeded
     y_pred_baseline = (
-        (val_df["BSEF"] > BSEF_THRESHOLD) | (val_df["gust_max_3h"] > GUST_THRESHOLD)
+        (test_df["BSEF"] > BSEF_THRESHOLD) | (test_df["gust_max_3h"] > GUST_THRESHOLD)
     ).astype(int)
 
     # For probabilistic metrics, assume 0.8 confidence when predicting 1, 0.2 when predicting 0
