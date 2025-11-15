@@ -18,7 +18,12 @@ from islandsense.schema import (
     validate_tides,
     validate_exposure,
 )
-from islandsense.features import compute_features, create_label, validate_features
+from islandsense.features import (
+    compute_features,
+    create_label,
+    validate_features,
+    validate_features_comprehensive,
+)
 
 
 def main():
@@ -30,7 +35,7 @@ def main():
     config = get_config()
 
     # Step 1: Load CSVs
-    print("\n[Step 1/6] Loading CSVs...")
+    print("\n[Step 1/7] Loading CSVs...")
     sailings_df = pd.read_csv(config.sailings_file)
     status_df = pd.read_csv(config.status_file)
     metocean_df = pd.read_csv(config.metocean_file)
@@ -44,7 +49,7 @@ def main():
     print(f"  Loaded {len(exposure_df)} exposure records")
 
     # Step 2: Validate schemas
-    print("\n[Step 2/6] Validating schemas...")
+    print("\n[Step 2/7] Validating schemas...")
     validate_sailings(sailings_df)
     validate_status(status_df)
     validate_metocean(metocean_df)
@@ -53,11 +58,11 @@ def main():
     print("  [OK] All schemas valid")
 
     # Step 3: Compute features
-    print("\n[Step 3/6] Computing features...")
+    print("\n[Step 3/7] Computing features...")
     features_df = compute_features(sailings_df, metocean_df, tides_df, status_df)
 
     # Step 4: Create labels
-    print("\n[Step 4/6] Creating labels...")
+    print("\n[Step 4/7] Creating labels...")
     labels = create_label(
         status_df, disruption_delay_minutes=config.disruption_delay_minutes
     )
@@ -67,7 +72,7 @@ def main():
     print(f"    Normal (0): {(1 - labels).sum()} ({(1 - labels.mean()):.1%})")
 
     # Step 5: Join into training table
-    print("\n[Step 5/6] Assembling training table...")
+    print("\n[Step 5/7] Assembling training table...")
     train_df = (
         sailings_df[["sailing_id", "route", "vessel", "etd_iso"]]
         .merge(features_df, on="sailing_id")
@@ -79,8 +84,12 @@ def main():
     print(f"  Columns: {list(train_df.columns)}")
 
     # Step 6: Validate features
-    print("\n[Step 6/6] Validating features...")
+    print("\n[Step 6/7] Validating features...")
     validate_features(features_df)
+
+    # Step 7: Comprehensive physics validation
+    print("\n[Step 7/7] Cross-validating features vs source data...")
+    validate_features_comprehensive(features_df, sailings_df, metocean_df)
 
     # Summary
     print("\n" + "=" * 80)

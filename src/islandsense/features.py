@@ -421,3 +421,138 @@ def validate_features(features_df: pd.DataFrame) -> None:
         print("[WARNING] prior_24h_delay has negative values")
 
     print("=" * 80)
+
+
+def validate_features_comprehensive(
+    features_df: pd.DataFrame,
+    sailings_df: pd.DataFrame,
+    metocean_df: pd.DataFrame,
+) -> None:
+    """Cross-validate features against source data for physics sanity.
+
+    Checks:
+    1. BSEF near 0 for head-on/astern, large for beam seas
+    2. gust_max_3h >= wind_kts on average
+    3. prior_24h_delay higher preceding storms (high BSEF/WOTDI)
+    """
+    print("\n" + "=" * 80)
+    print("Comprehensive Physics Validation")
+    print("=" * 80)
+
+    # Prepare metocean indexed by time
+    metocean_indexed = _index_by_timestamp(metocean_df, MetoceanColumns.TS_ISO)
+
+    # Build joined data for analysis
+    validation_data = []
+    for _, sailing in sailings_df.iterrows():
+        sailing_id = sailing[SailingColumns.SAILING_ID]
+        etd = pd.to_datetime(sailing[SailingColumns.ETD_ISO])
+        head_deg = sailing[SailingColumns.HEAD_DEG]
+
+        metocean_row = _get_nearest_row(etd, metocean_indexed)
+        wave_dir_deg = metocean_row[MetoceanColumns.WAVE_DIR_DEG]
+        wind_kts = metocean_row[MetoceanColumns.WIND_KTS]
+
+        # Get features for this sailing
+        feature_row = features_df[features_df["sailing_id"] == sailing_id].iloc[0]
+
+        # Compute relative wave angle
+        rel_wave_deg = wrap_angle(wave_dir_deg - head_deg)
+        abs_rel_wave = abs(rel_wave_deg)
+
+        validation_data.append(
+            {
+                "sailing_id": sailing_id,
+                "rel_wave_deg": rel_wave_deg,
+                "abs_rel_wave": abs_rel_wave,
+                "BSEF": feature_row["BSEF"],
+                "WOTDI": feature_row["WOTDI"],
+                "wind_kts": wind_kts,
+                "gust_max_3h": feature_row["gust_max_3h"],
+                "prior_24h_delay": feature_row["prior_24h_delay"],
+            }
+        )
+
+    val_df = pd.DataFrame(validation_data)
+
+    # Check 1: BSEF correlation with beam sea angle
+    print("\n[Check 1] BSEF vs wave angle:")
+    # Beam seas: abs(rel_wave) near 90 deg should have high BSEF
+    # Head/astern: abs(rel_wave) near 0 or 180 should have low BSEF
+    beam_seas = val_df[val_df["abs_rel_wave"].between(70, 110)]  # ±20 deg around 90
+    head_astern = val_df[(val_df["abs_rel_wave"] < 20) | (val_df["abs_rel_wave"] > 160)]
+
+    if len(beam_seas) > 0 and len(head_astern) > 0:
+        mean_bsef_beam = beam_seas["BSEF"].mean()
+        mean_bsef_head = head_astern["BSEF"].mean()
+        ratio = mean_bsef_beam / mean_bsef_head if mean_bsef_head > 0 else float("inf")
+
+        print(
+            f"  Beam seas (70-110°): mean BSEF = {mean_bsef_beam:.3f} (n={len(beam_seas)})"
+        )
+        print(
+            f"  Head/astern (0-20°, 160-180°): mean BSEF = {mean_bsef_head:.3f} (n={len(head_astern)})"
+        )
+
+        if ratio > 2.0:
+            print(
+                f"[OK] Beam BSEF {ratio:.1f}x higher than head/astern (physics valid)"
+            )
+        elif ratio > 1.2:
+            print(f"[WARNING] Beam BSEF only {ratio:.1f}x higher (expected >2x)")
+        else:
+            print(f"[ERROR] BSEF physics broken: ratio = {ratio:.1f} (should be >2x)")
+    else:
+        print("[WARNING] Insufficient data to validate BSEF vs wave angle")
+
+    # Check 2: gust_max_3h >= wind_kts on average
+    print("\n[Check 2] gust_max_3h vs wind_kts:")
+    mean_gust = val_df["gust_max_3h"].mean()
+    mean_wind = val_df["wind_kts"].mean()
+    gust_exceeds = (val_df["gust_max_3h"] >= val_df["wind_kts"]).mean()
+
+    print(f"  Mean gust_max_3h: {mean_gust:.1f} kts")
+    print(f"  Mean wind_kts (at ETD): {mean_wind:.1f} kts")
+    print(f"  Gust >= wind in {gust_exceeds:.1%} of sailings")
+
+    if mean_gust > mean_wind and gust_exceeds > 0.7:
+        print(f"[OK] Gust captures peaks (mean {mean_gust / mean_wind:.2f}x wind)")
+    elif gust_exceeds > 0.5:
+        print(f"[WARNING] Gust only {gust_exceeds:.1%} >= wind (expected >70%)")
+    else:
+        print(f"[ERROR] Gust physics broken: only {gust_exceeds:.1%} >= wind")
+
+    # Check 3: prior_24h_delay higher preceding storms
+    print("\n[Check 3] prior_24h_delay vs weather severity:")
+    # Define "severe weather" as high BSEF or WOTDI
+    val_df["severity"] = val_df["BSEF"] + val_df["WOTDI"]
+    severe_threshold = val_df["severity"].quantile(0.75)  # Top 25% severity
+
+    severe = val_df[val_df["severity"] >= severe_threshold]
+    mild = val_df[val_df["severity"] < val_df["severity"].quantile(0.25)]
+
+    if len(severe) > 0 and len(mild) > 0:
+        mean_delay_severe = severe["prior_24h_delay"].mean()
+        mean_delay_mild = mild["prior_24h_delay"].mean()
+
+        print(
+            f"  Severe weather (top 25%): mean prior_24h_delay = {mean_delay_severe:.1f} min"
+        )
+        print(
+            f"  Mild weather (bottom 25%): mean prior_24h_delay = {mean_delay_mild:.1f} min"
+        )
+
+        if mean_delay_severe > mean_delay_mild * 1.5:
+            print(
+                f"[OK] Severe weather shows {mean_delay_severe / mean_delay_mild:.1f}x higher prior delays"
+            )
+        elif mean_delay_severe > mean_delay_mild:
+            print(
+                f"[WARNING] Weak correlation: only {mean_delay_severe / mean_delay_mild:.1f}x higher"
+            )
+        else:
+            print("[WARNING] No correlation between weather severity and prior delays")
+    else:
+        print("[WARNING] Insufficient data to validate delay correlation")
+
+    print("=" * 80)
