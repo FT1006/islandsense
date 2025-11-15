@@ -148,6 +148,12 @@ class Config:
     def show_download_brief(self) -> bool:
         return self._data["ui"]["show_download_brief"]
 
+    # Optimizer settings (M2.5)
+    @property
+    def optimizer(self) -> Dict[str, Any]:
+        """Get optimizer configuration (M2.5 prescriptive core)."""
+        return self._data.get("optimizer", {})
+
 
 # Global config instance
 _config: Optional[Config] = None

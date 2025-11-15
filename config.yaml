@@ -89,12 +89,46 @@ budgets:
   fresh_forward_units_per_week: 600.0    # soft cap on brought-forward fresh units/week
   # fuel budgets optional for MVP
 
-optimiser:
-  enabled: false                         # set to true to use optimiser instead of static alphas
-  grid_forward: [0.0, 0.10, 0.20, 0.30]  # forward fraction grid to search
-  grid_air: [0.0, 0.05, 0.10, 0.15]      # air fraction grid to search
-  beta_forward: 0.5                      # effectiveness coefficient for forward shift
-  beta_air: 0.9                          # effectiveness coefficient for air lift
+optimizer:
+  enabled: true                          # set to true to use optimiser instead of static alphas
+
+  # Cost per unit of disrupted exposure if we DON'T mitigate
+  penalty_per_unit:
+    fresh: 4.0                           # £ per unit-hour of shelf gap
+    fuel: 3.0                            # £ per trailer-equivalent at risk
+
+  # Operational cost per unit when we move/air-lift
+  cost_forward:
+    fresh: 0.05                          # £ per pallet brought forward
+    fuel: 0.05                           # £ per trailer brought forward
+
+  cost_air:
+    fresh: 0.40                          # £ per pallet air-lifted
+    fuel: 0.30                           # £ per trailer air-lifted
+
+  # Effectiveness of each action in reducing at-risk exposure
+  beta_forward:
+    fresh: 0.7                           # 10% forward → 7% risk reduction
+    fuel: 0.5                            # 10% forward → 5% risk reduction
+
+  beta_air:
+    fresh: 0.9                           # 10% air → 9% risk reduction
+    fuel: 0.8                            # 10% air → 8% risk reduction
+
+  # Hard caps: with linear objective, optimizer hits max if beneficial
+  # So max_forward_fraction IS your recommended percentage
+  shift_limits:
+    fresh:
+      max_forward_fraction: 0.10         # force "bring forward 10%"
+      max_air_fraction: 0.00             # ban air in MVP (forces y=0)
+    fuel:
+      max_forward_fraction: 0.10
+      max_air_fraction: 0.00
+
+  # Grid to search over
+  grid:
+    forward_fractions: [0.0, 0.10]       # 0% vs 10% in MVP
+    air_fractions: [0.0, 0.05, 0.10]     # kept for future; max_air=0 kills them
 
 model:
   type: "xgboost"
