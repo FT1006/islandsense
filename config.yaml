@@ -58,8 +58,8 @@ scenario_selection:
   auto_select: false             # no automatic Δ-threshold logic in MVP
 
 impact:
-  k_hours_per_unit: 0.25         # each shifted Fresh unit avoids ~0.25h of shelf-gap
-  units_per_trailer: 24          # 1 "trailer-equivalent" = 24 units
+  k_hours_per_unit: 2.0          # each shifted Fresh unit avoids ~2h of shelf-gap
+  units_per_trailer: 4           # 1 "trailer-equivalent" = 4 units (for visible impact)
 
 # === M1.5: Prescriptive Economics (Config-Only) ===
 # These parameters enable the optional tiny optimiser (M2.5) to compute
