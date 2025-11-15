@@ -70,6 +70,19 @@ model:
   random_seed: 42                # keep runs deterministic for the demo
   test_size_fraction: 0.2        # simple train/test split
 
+  # Training hyperparameters (minimal, sane defaults for hackathon)
+  training:
+    max_depth: 3                 # Shallow trees to avoid overfitting
+    learning_rate: 0.05          # Slow learning
+    n_estimators: 100            # Moderate ensemble size
+    scale_pos_weight: 29.0       # Handle 3.35% class imbalance (~1241/43)
+
+    # Monotonic constraints (order: WOTDI, BSEF, gust_max_3h, tide_gate_margin, prior_24h_delay, day_of_week, month)
+    # 1 = higher feature → higher disruption risk
+    # -1 = lower feature → higher disruption risk
+    # 0 = no constraint
+    monotone_constraints: [1, 1, 1, -1, 1, 0, 0]
+
 ui:
   default_window_label: "Next 72 hours"
   show_what_if_sliders: true
