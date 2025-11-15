@@ -35,7 +35,7 @@ def main():
     config = get_config()
 
     # Step 1: Load CSVs
-    print("\n[Step 1/7] Loading CSVs...")
+    print("\n[Step 1/9] Loading CSVs...")
     sailings_df = pd.read_csv(config.sailings_file)
     status_df = pd.read_csv(config.status_file)
     metocean_df = pd.read_csv(config.metocean_file)
@@ -49,7 +49,7 @@ def main():
     print(f"  Loaded {len(exposure_df)} exposure records")
 
     # Step 2: Validate schemas
-    print("\n[Step 2/7] Validating schemas...")
+    print("\n[Step 2/9] Validating schemas...")
     validate_sailings(sailings_df)
     validate_status(status_df)
     validate_metocean(metocean_df)
@@ -58,11 +58,11 @@ def main():
     print("  [OK] All schemas valid")
 
     # Step 3: Compute features
-    print("\n[Step 3/7] Computing features...")
+    print("\n[Step 3/9] Computing features...")
     features_df = compute_features(sailings_df, metocean_df, tides_df, status_df)
 
     # Step 4: Create labels
-    print("\n[Step 4/7] Creating labels...")
+    print("\n[Step 4/9] Creating labels...")
     labels = create_label(
         status_df, disruption_delay_minutes=config.disruption_delay_minutes
     )
@@ -72,7 +72,7 @@ def main():
     print(f"    Normal (0): {(1 - labels).sum()} ({(1 - labels.mean()):.1%})")
 
     # Step 5: Join into training table
-    print("\n[Step 5/7] Assembling training table...")
+    print("\n[Step 5/9] Assembling training table...")
     train_df = (
         sailings_df[["sailing_id", "route", "vessel", "etd_iso"]]
         .merge(features_df, on="sailing_id")
@@ -83,13 +83,86 @@ def main():
     print(f"  [OK] Training table shape: {train_df.shape}")
     print(f"  Columns: {list(train_df.columns)}")
 
+    # Step 5b: Add train/val split (date-based, not random)
+    print("\n[Step 5b] Adding train/val split (date-based)...")
+    train_df["etd"] = pd.to_datetime(train_df["etd_iso"])
+    train_df = train_df.sort_values("etd").reset_index(drop=True)
+
+    # 80/20 split based on chronological order
+    split_idx = int(len(train_df) * 0.8)
+    train_df["split"] = "train"
+    train_df.loc[split_idx:, "split"] = "val"
+
+    split_date = train_df.loc[split_idx, "etd"]
+    train_count = (train_df["split"] == "train").sum()
+    val_count = (train_df["split"] == "val").sum()
+
+    print(
+        f"  Train: {train_count} sailings ({train_count / len(train_df):.1%}) - up to {split_date.date()}"
+    )
+    print(
+        f"  Val:   {val_count} sailings ({val_count / len(train_df):.1%}) - from {split_date.date()} onwards"
+    )
+    print(
+        f"  Train disruption rate: {train_df[train_df['split'] == 'train']['disruption'].mean():.1%}"
+    )
+    print(
+        f"  Val disruption rate:   {train_df[train_df['split'] == 'val']['disruption'].mean():.1%}"
+    )
+
     # Step 6: Validate features
-    print("\n[Step 6/7] Validating features...")
+    print("\n[Step 6/9] Validating features...")
     validate_features(features_df)
 
     # Step 7: Comprehensive physics validation
-    print("\n[Step 7/7] Cross-validating features vs source data...")
+    print("\n[Step 7/9] Cross-validating features vs source data...")
     validate_features_comprehensive(features_df, sailings_df, metocean_df)
+
+    # Step 8: Baseline heuristic evaluation
+    print("\n[Step 8/9] Evaluating baseline heuristic (physics rule without ML)...")
+    from sklearn.metrics import brier_score_loss, log_loss, accuracy_score
+
+    # Get validation set
+    val_df = train_df[train_df["split"] == "val"].copy()
+    y_true = val_df["disruption"].values
+
+    # Baseline heuristic: Disrupted if (BSEF > threshold) OR (gust_max_3h > threshold)
+    # Tune thresholds on train set to be reasonable (not optimized, just sensible)
+    BSEF_THRESHOLD = 2.0  # High beam-sea exposure
+    GUST_THRESHOLD = 40.0  # High gust speed (kts)
+
+    # Simple rule: predict disruption = 1 if either threshold exceeded
+    y_pred_baseline = (
+        (val_df["BSEF"] > BSEF_THRESHOLD) | (val_df["gust_max_3h"] > GUST_THRESHOLD)
+    ).astype(int)
+
+    # For probabilistic metrics, assume 0.8 confidence when predicting 1, 0.2 when predicting 0
+    # (simple heuristic doesn't give probabilities, so we use fixed confidence levels)
+    y_prob_baseline = y_pred_baseline * 0.8 + (1 - y_pred_baseline) * 0.2
+
+    # Compute metrics
+    baseline_brier = brier_score_loss(y_true, y_prob_baseline)
+    baseline_logloss = log_loss(y_true, y_prob_baseline)
+    baseline_acc = accuracy_score(y_true, y_pred_baseline)
+    baseline_disruption_rate = y_pred_baseline.mean()
+
+    print(
+        f"  Baseline rule: (BSEF > {BSEF_THRESHOLD}) OR (gust_max_3h > {GUST_THRESHOLD} kts)"
+    )
+    print(f"  Predicted disruption rate: {baseline_disruption_rate:.1%}")
+    print(f"  Accuracy:    {baseline_acc:.3f}")
+    print(f"  Brier score: {baseline_brier:.3f}")
+    print(f"  Log loss:    {baseline_logloss:.3f}")
+    print(
+        f"\n  [BASELINE FLOOR] Model must beat Brier < {baseline_brier:.3f} to be worthwhile"
+    )
+
+    # Step 9: Save dataset
+    print("\n[Step 9/9] Saving dataset...")
+    output_path = config.data_dir / "train_dataset.csv"
+    train_df.to_csv(output_path, index=False)
+    print(f"  [OK] Dataset saved to {output_path}")
+    print(f"  Columns: {list(train_df.columns)}")
 
     # Summary
     print("\n" + "=" * 80)
