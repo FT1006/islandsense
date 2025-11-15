@@ -2,7 +2,7 @@
 
 These tests protect against subtle bugs in:
 - Time → day_index mapping
-- E_loss + JDI scaling
+- E_loss + risk score scaling
 - Scenario/impact math
 - Contribution sorting & CSV shapes
 """
@@ -15,10 +15,10 @@ import pandas as pd
 from islandsense.aggregate import (
     compute_day_index,
     compute_daily_e_loss,
-    compute_jdi,
+    compute_risk_score,
     get_band,
-    add_jdi_columns,
-    compute_weekly_jdi,
+    add_risk_columns,
+    compute_weekly_risk,
     apply_scenario,
     compute_impact,
     compute_sailing_contributions,
@@ -34,7 +34,7 @@ def mock_config():
     """Create a mock config with known parameters."""
     config = MagicMock()
     config.horizon_days = 7
-    config.jdi_bands = {
+    config.risk_bands = {
         "green": {"range": [0, 39]},
         "amber": {"range": [40, 69]},
         "red": {"range": [70, 100]},
@@ -50,14 +50,14 @@ def mock_config():
     ]
 
     # Default: same scaling for both categories
-    def jdi_min(category):
+    def risk_min(category):
         return 0.0
 
-    def jdi_max(category):
+    def risk_max(category):
         return 100.0
 
-    config.jdi_expected_loss_min = jdi_min
-    config.jdi_expected_loss_max = jdi_max
+    config.risk_expected_loss_min = risk_min
+    config.risk_expected_loss_max = risk_max
 
     return config
 
@@ -173,25 +173,25 @@ class TestComputeDailyELoss:
         assert day1_fuel == 3.0
 
 
-# 3. test_add_jdi_columns_uses_per_category_scaling_and_bands
+# 3. test_add_risk_columns_uses_per_category_scaling_and_bands
 
 
-class TestJDIScalingAndBands:
-    def test_compute_jdi_scaling_and_clamping(self):
-        """JDI should scale E_loss to [0,100] and clamp."""
+class TestRiskScalingAndBands:
+    def test_compute_risk_score_scaling_and_clamping(self):
+        """Risk score should scale E_loss to [0,100] and clamp."""
         # min=0, max=100
-        assert compute_jdi(0.0, 0.0, 100.0) == 0
-        assert compute_jdi(50.0, 0.0, 100.0) == 50
-        assert compute_jdi(100.0, 0.0, 100.0) == 100
+        assert compute_risk_score(0.0, 0.0, 100.0) == 0
+        assert compute_risk_score(50.0, 0.0, 100.0) == 50
+        assert compute_risk_score(100.0, 0.0, 100.0) == 100
 
         # Clamping: E_loss beyond max
-        assert compute_jdi(200.0, 0.0, 100.0) == 100
+        assert compute_risk_score(200.0, 0.0, 100.0) == 100
 
         # Clamping: E_loss below min
-        assert compute_jdi(-10.0, 0.0, 100.0) == 0
+        assert compute_risk_score(-10.0, 0.0, 100.0) == 0
 
         # Edge case: max == min
-        assert compute_jdi(50.0, 100.0, 100.0) == 0
+        assert compute_risk_score(50.0, 100.0, 100.0) == 0
 
     def test_get_band_boundaries(self):
         """Band assignment at boundaries."""
@@ -208,8 +208,8 @@ class TestJDIScalingAndBands:
         assert get_band(70, bands_config) == "red"
         assert get_band(100, bands_config) == "red"
 
-    def test_add_jdi_columns_per_category_scaling(self):
-        """JDI should use per-category min/max from config."""
+    def test_add_risk_columns_per_category_scaling(self):
+        """Risk score should use per-category min/max from config."""
         e_loss_df = pd.DataFrame(
             {
                 "day_index": [0, 0],
@@ -221,47 +221,47 @@ class TestJDIScalingAndBands:
 
         # Config with different scaling per category
         config = MagicMock()
-        config.jdi_bands = {
+        config.risk_bands = {
             "green": {"range": [0, 39]},
             "amber": {"range": [40, 69]},
             "red": {"range": [70, 100]},
         }
 
-        # Fresh: 10 is near max (10) → JDI 100
-        # Fuel: 10 is mid-range (max=20) → JDI 50
-        def jdi_min(cat):
+        # Fresh: 10 is near max (10) → risk 100
+        # Fuel: 10 is mid-range (max=20) → risk 50
+        def risk_min(cat):
             return 0.0
 
-        def jdi_max(cat):
+        def risk_max(cat):
             return 10.0 if cat == "fresh" else 20.0
 
-        config.jdi_expected_loss_min = jdi_min
-        config.jdi_expected_loss_max = jdi_max
+        config.risk_expected_loss_min = risk_min
+        config.risk_expected_loss_max = risk_max
 
-        result = add_jdi_columns(e_loss_df, config)
+        result = add_risk_columns(e_loss_df, config)
 
-        fresh_jdi = result[result["category"] == "fresh"].iloc[0]["JDI_baseline"]
-        fuel_jdi = result[result["category"] == "fuel"].iloc[0]["JDI_baseline"]
+        fresh_risk = result[result["category"] == "fresh"].iloc[0]["risk_baseline"]
+        fuel_risk = result[result["category"] == "fuel"].iloc[0]["risk_baseline"]
 
-        assert fresh_jdi == 100  # 10/10 = 1.0 → 100
-        assert fuel_jdi == 50  # 10/20 = 0.5 → 50
-        assert fresh_jdi > fuel_jdi
-
-
-# 4. test_compute_weekly_jdi_averages_and_handles_nan
+        assert fresh_risk == 100  # 10/10 = 1.0 → 100
+        assert fuel_risk == 50  # 10/20 = 0.5 → 50
+        assert fresh_risk > fuel_risk
 
 
-class TestComputeWeeklyJDI:
+# 4. test_compute_weekly_risk_averages_and_handles_nan
+
+
+class TestComputeWeeklyRisk:
     def test_simple_average(self):
-        """Weekly JDI is mean of daily JDIs."""
-        daily_jdi_df = pd.DataFrame(
+        """Weekly risk is mean of daily risk scores."""
+        daily_risk_df = pd.DataFrame(
             {
                 "category": ["fresh", "fresh", "fresh", "fuel", "fuel", "fuel"],
-                "JDI_baseline": [10, 20, 30, 40, 50, 60],
+                "risk_baseline": [10, 20, 30, 40, 50, 60],
             }
         )
 
-        result = compute_weekly_jdi(daily_jdi_df)
+        result = compute_weekly_risk(daily_risk_df)
 
         assert result["fresh"] == 20  # mean(10,20,30)
         assert result["fuel"] == 50  # mean(40,50,60)
@@ -269,14 +269,14 @@ class TestComputeWeeklyJDI:
     def test_empty_category_returns_zero(self):
         """Empty category should return 0, not NaN error."""
         # Only fresh data, no fuel
-        daily_jdi_df = pd.DataFrame(
+        daily_risk_df = pd.DataFrame(
             {
                 "category": ["fresh", "fresh"],
-                "JDI_baseline": [10, 20],
+                "risk_baseline": [10, 20],
             }
         )
 
-        result = compute_weekly_jdi(daily_jdi_df)
+        result = compute_weekly_risk(daily_risk_df)
 
         assert result["fresh"] == 15
         assert result["fuel"] == 0  # NaN safety
@@ -305,16 +305,16 @@ class TestApplyScenario:
         # Config with simple scaling
         config = MagicMock()
 
-        def jdi_min(cat):
+        def risk_min(cat):
             return 0.0
 
-        def jdi_max(cat):
+        def risk_max(cat):
             return 40.0  # Simple for both
 
-        config.jdi_expected_loss_min = jdi_min
-        config.jdi_expected_loss_max = jdi_max
+        config.risk_expected_loss_min = risk_min
+        config.risk_expected_loss_max = risk_max
 
-        scenario_df, weekly_jdi = apply_scenario(e_loss_df, scenario_config, config)
+        scenario_df, weekly_risk = apply_scenario(e_loss_df, scenario_config, config)
 
         # Check E_loss_scenario
         # Fresh: 10*0.5=5, 30*0.5=15
@@ -329,13 +329,13 @@ class TestApplyScenario:
         assert fresh_scenario == [5.0, 15.0]
         assert fuel_scenario == [15.0, 30.0]
 
-        # Weekly JDI should be lower than baseline
+        # Weekly risk should be lower than baseline
         # Baseline fresh: mean(10,30)/40*100 = 50
         # Scenario fresh: mean(5,15)/40*100 = 25
-        assert weekly_jdi["fresh"] == 25
+        assert weekly_risk["fresh"] == 25
         # Baseline fuel: mean(20,40)/40*100 = 75
         # Scenario fuel: mean(15,30)/40*100 = 56
-        assert weekly_jdi["fuel"] == 56
+        assert weekly_risk["fuel"] == 56
 
 
 # 6. test_compute_impact_maps_delta_to_hours_and_trailers

@@ -22,7 +22,7 @@ categories:
     label: "Fuel"
     exposure_unit_label: "trailer-equivalents"
 
-jdi:
+risk:
   categories:
     fresh:
       expected_loss_min: 0.0

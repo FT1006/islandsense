@@ -25,7 +25,7 @@ class Config:
             "data",
             "label",
             "categories",
-            "jdi",
+            "risk",
             "scenarios",
             "impact",
             "model",
@@ -79,23 +79,23 @@ class Config:
     def categories(self) -> Dict[str, Dict[str, str]]:
         return self._data["categories"]
 
-    # JDI settings
+    # Risk score settings
     @property
-    def jdi_bands(self) -> Dict[str, Dict[str, Any]]:
-        return self._data["jdi"]["bands"]
+    def risk_bands(self) -> Dict[str, Dict[str, Any]]:
+        return self._data["risk"]["bands"]
 
     @property
-    def jdi_categories(self) -> Dict[str, Dict[str, float]]:
-        """Get per-category JDI scaling parameters."""
-        return self._data["jdi"]["categories"]
+    def risk_categories(self) -> Dict[str, Dict[str, float]]:
+        """Get per-category risk scaling parameters."""
+        return self._data["risk"]["categories"]
 
-    def jdi_expected_loss_min(self, category: str) -> float:
+    def risk_expected_loss_min(self, category: str) -> float:
         """Get expected_loss_min for a specific category."""
-        return self._data["jdi"]["categories"][category]["expected_loss_min"]
+        return self._data["risk"]["categories"][category]["expected_loss_min"]
 
-    def jdi_expected_loss_max(self, category: str) -> float:
+    def risk_expected_loss_max(self, category: str) -> float:
         """Get expected_loss_max for a specific category."""
-        return self._data["jdi"]["categories"][category]["expected_loss_max"]
+        return self._data["risk"]["categories"][category]["expected_loss_max"]
 
     # Scenarios (replaces old actions)
     @property

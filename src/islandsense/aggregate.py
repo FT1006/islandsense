@@ -1,8 +1,8 @@
-"""M3 Aggregation: Per-sailing predictions → Daily JDI → Weekly JDI + Scenarios.
+"""M3 Aggregation: Per-sailing predictions → Daily Risk → Weekly Risk + Scenarios.
 
 This module converts per_sailing_predictions.csv into:
-- daily_jdi.csv: Daily JDI per category (Fresh/Fuel) for D0..D6
-- weekly_jdi.csv: Weekly JDI baseline + scenario JDIs per category
+- daily_risk.csv: Daily risk score per category (Fresh/Fuel) for D0..D6
+- weekly_risk.csv: Weekly risk baseline + scenario risk scores per category
 - scenario_impact.csv: Impact metrics (hours_avoided, trailers_avoided)
 - sailing_contrib.csv: Per-sailing contributions for drilldown
 """
@@ -110,7 +110,7 @@ def ensure_full_grid(
 ) -> pd.DataFrame:
     """Ensure all (day_index, category) pairs exist, filling missing with E_loss=0.
 
-    This guarantees 7×2=14 rows for daily_jdi.csv and consistent weekly averaging.
+    This guarantees 7×2=14 rows for daily_risk.csv and consistent weekly averaging.
 
     Args:
         e_loss_df: DataFrame with day_index, date, category, E_loss
@@ -147,36 +147,36 @@ def ensure_full_grid(
     return merged
 
 
-def compute_jdi(
+def compute_risk_score(
     e_loss: float, expected_loss_min: float, expected_loss_max: float
 ) -> int:
-    """Scale E_loss to JDI [0, 100].
+    """Scale E_loss to risk score [0, 100].
 
-    JDI = round(clamp((E_loss - min) / (max - min), 0, 1) * 100)
+    risk = round(clamp((E_loss - min) / (max - min), 0, 1) * 100)
 
     Args:
         e_loss: Expected loss value
-        expected_loss_min: Minimum expected loss (maps to JDI 0)
-        expected_loss_max: Maximum expected loss (maps to JDI 100)
+        expected_loss_min: Minimum expected loss (maps to risk 0)
+        expected_loss_max: Maximum expected loss (maps to risk 100)
 
     Returns:
-        JDI score as integer [0, 100]
+        Risk score as integer [0, 100]
     """
     if expected_loss_max <= expected_loss_min:
         return 0
 
     e_norm = (e_loss - expected_loss_min) / (expected_loss_max - expected_loss_min)
     e_norm = np.clip(e_norm, 0.0, 1.0)
-    jdi = int(round(e_norm * 100))
+    risk = int(round(e_norm * 100))
 
-    return jdi
+    return risk
 
 
-def get_band(jdi: int, bands_config: Dict) -> str:
-    """Determine JDI band (green/amber/red) from config thresholds.
+def get_band(risk: int, bands_config: Dict) -> str:
+    """Determine risk band (green/amber/red) from config thresholds.
 
     Args:
-        jdi: JDI score [0, 100]
+        risk: Risk score [0, 100]
         bands_config: Band configuration from config.yaml
 
     Returns:
@@ -184,27 +184,27 @@ def get_band(jdi: int, bands_config: Dict) -> str:
     """
     for band_name, band_info in bands_config.items():
         low, high = band_info["range"]
-        if low <= jdi <= high:
+        if low <= risk <= high:
             return band_name
 
     # Default fallback
     return "red"
 
 
-def add_jdi_columns(e_loss_df: pd.DataFrame, config) -> pd.DataFrame:
-    """Add JDI_baseline and band columns to E_loss DataFrame.
+def add_risk_columns(e_loss_df: pd.DataFrame, config) -> pd.DataFrame:
+    """Add risk_baseline and band columns to E_loss DataFrame.
 
     Args:
         e_loss_df: DataFrame with day_index, date, category, E_loss
         config: Config object
 
     Returns:
-        DataFrame with JDI_baseline and band columns added
+        DataFrame with risk_baseline and band columns added
     """
     df = e_loss_df.copy()
 
-    # Compute JDI for each row
-    jdi_values = []
+    # Compute risk score for each row
+    risk_values = []
     bands = []
 
     for _, row in df.iterrows():
@@ -212,41 +212,41 @@ def add_jdi_columns(e_loss_df: pd.DataFrame, config) -> pd.DataFrame:
         e_loss = row["E_loss"]
 
         # Get per-category scaling parameters
-        loss_min = config.jdi_expected_loss_min(category)
-        loss_max = config.jdi_expected_loss_max(category)
+        loss_min = config.risk_expected_loss_min(category)
+        loss_max = config.risk_expected_loss_max(category)
 
-        jdi = compute_jdi(e_loss, loss_min, loss_max)
-        band = get_band(jdi, config.jdi_bands)
+        risk = compute_risk_score(e_loss, loss_min, loss_max)
+        band = get_band(risk, config.risk_bands)
 
-        jdi_values.append(jdi)
+        risk_values.append(risk)
         bands.append(band)
 
-    df["JDI_baseline"] = jdi_values
+    df["risk_baseline"] = risk_values
     df["band"] = bands
 
     return df
 
 
-def compute_weekly_jdi(daily_jdi_df: pd.DataFrame) -> Dict[str, int]:
-    """Compute weekly baseline JDI per category (mean of daily JDIs).
+def compute_weekly_risk(daily_risk_df: pd.DataFrame) -> Dict[str, int]:
+    """Compute weekly baseline risk per category (mean of daily risk scores).
 
     Args:
-        daily_jdi_df: DataFrame with category, JDI_baseline
+        daily_risk_df: DataFrame with category, risk_baseline
 
     Returns:
-        Dict mapping category to weekly JDI baseline
+        Dict mapping category to weekly risk baseline
     """
     weekly = {}
 
     for category in ["fresh", "fuel"]:
-        cat_df = daily_jdi_df[daily_jdi_df["category"] == category]
-        mean_val = cat_df["JDI_baseline"].mean()
+        cat_df = daily_risk_df[daily_risk_df["category"] == category]
+        mean_val = cat_df["risk_baseline"].mean()
         # Handle edge case where no data exists
         if pd.isna(mean_val):
-            weekly_jdi = 0
+            weekly_risk = 0
         else:
-            weekly_jdi = int(round(mean_val))
-        weekly[category] = weekly_jdi
+            weekly_risk = int(round(mean_val))
+        weekly[category] = weekly_risk
 
     return weekly
 
@@ -254,7 +254,7 @@ def compute_weekly_jdi(daily_jdi_df: pd.DataFrame) -> Dict[str, int]:
 def apply_scenario(
     e_loss_df: pd.DataFrame, scenario_config: Dict, config
 ) -> Tuple[pd.DataFrame, Dict[str, int]]:
-    """Apply scenario alpha scaling to E_loss and compute scenario JDIs.
+    """Apply scenario alpha scaling to E_loss and compute scenario risk scores.
 
     E_loss_k[c,d] = E_loss[c,d] * (1 - alpha_k[c])
 
@@ -264,7 +264,7 @@ def apply_scenario(
         config: Config object
 
     Returns:
-        Tuple of (daily_scenario_df, weekly_jdi_dict)
+        Tuple of (daily_scenario_df, weekly_risk_dict)
     """
     alphas = scenario_config["alpha"]
 
@@ -278,27 +278,27 @@ def apply_scenario(
 
     df["E_loss_scenario"] = df.apply(apply_alpha, axis=1)
 
-    # Compute JDI for scenario E_loss
-    jdi_values = []
+    # Compute risk score for scenario E_loss
+    risk_values = []
     for _, row in df.iterrows():
         category = row["category"]
         e_loss_scenario = row["E_loss_scenario"]
 
-        loss_min = config.jdi_expected_loss_min(category)
-        loss_max = config.jdi_expected_loss_max(category)
+        loss_min = config.risk_expected_loss_min(category)
+        loss_max = config.risk_expected_loss_max(category)
 
-        jdi = compute_jdi(e_loss_scenario, loss_min, loss_max)
-        jdi_values.append(jdi)
+        risk = compute_risk_score(e_loss_scenario, loss_min, loss_max)
+        risk_values.append(risk)
 
-    df["JDI_scenario"] = jdi_values
+    df["risk_scenario"] = risk_values
 
-    # Compute weekly JDI for this scenario
-    weekly_jdi = {}
+    # Compute weekly risk for this scenario
+    weekly_risk = {}
     for category in ["fresh", "fuel"]:
         cat_df = df[df["category"] == category]
-        weekly_jdi[category] = int(round(cat_df["JDI_scenario"].mean()))
+        weekly_risk[category] = int(round(cat_df["risk_scenario"].mean()))
 
-    return df, weekly_jdi
+    return df, weekly_risk
 
 
 def compute_impact(
@@ -393,7 +393,7 @@ def aggregate(
     output_dir: Path = Path("data"),
     now: Optional[datetime] = None,
 ) -> Dict[str, pd.DataFrame]:
-    """Main aggregation pipeline: predictions → JDI + scenarios + impact.
+    """Main aggregation pipeline: predictions → risk scores + scenarios + impact.
 
     Args:
         predictions_path: Path to per_sailing_predictions.csv
@@ -459,20 +459,20 @@ def aggregate(
     e_loss_df = ensure_full_grid(e_loss_df, now.date(), config.horizon_days)
     print(f"  ✓ Grid now has {len(e_loss_df)} rows (7 days × 2 categories)")
 
-    # Add JDI and band columns
-    print("\nScaling to JDI baseline...")
-    daily_jdi_df = add_jdi_columns(e_loss_df, config)
+    # Add risk score and band columns
+    print("\nScaling to risk baseline...")
+    daily_risk_df = add_risk_columns(e_loss_df, config)
 
     # Compute weekly baseline
-    print("\nComputing weekly baseline JDI...")
-    weekly_baseline = compute_weekly_jdi(daily_jdi_df)
+    print("\nComputing weekly baseline risk...")
+    weekly_baseline = compute_weekly_risk(daily_risk_df)
     print(f"  Fresh: {weekly_baseline['fresh']}")
     print(f"  Fuel: {weekly_baseline['fuel']}")
 
     # Process each scenario
     print("\nProcessing scenarios...")
     scenario_results = {}
-    weekly_jdis = {"baseline": weekly_baseline}
+    weekly_risks = {"baseline": weekly_baseline}
     impacts = {}
 
     for scenario_config in config.scenarios:
@@ -480,12 +480,14 @@ def aggregate(
         print(f"\n  Scenario: {scenario_id} ({scenario_config['name']})")
 
         # Apply scenario
-        scenario_df, weekly_jdi = apply_scenario(daily_jdi_df, scenario_config, config)
-        print(f"    Fresh JDI: {weekly_baseline['fresh']} → {weekly_jdi['fresh']}")
-        print(f"    Fuel JDI: {weekly_baseline['fuel']} → {weekly_jdi['fuel']}")
+        scenario_df, weekly_risk = apply_scenario(
+            daily_risk_df, scenario_config, config
+        )
+        print(f"    Fresh risk: {weekly_baseline['fresh']} → {weekly_risk['fresh']}")
+        print(f"    Fuel risk: {weekly_baseline['fuel']} → {weekly_risk['fuel']}")
 
         # Compute impact
-        impact = compute_impact(daily_jdi_df, scenario_df, config)
+        impact = compute_impact(daily_risk_df, scenario_df, config)
         print(f"    Fresh hours avoided: {impact['fresh']['hours_avoided']:.1f}")
         print(f"    Fuel trailers avoided: {impact['fuel']['trailers_avoided']:.1f}")
         print(
@@ -498,7 +500,7 @@ def aggregate(
         )
 
         scenario_results[scenario_id] = scenario_df
-        weekly_jdis[scenario_id] = weekly_jdi
+        weekly_risks[scenario_id] = weekly_risk
         impacts[scenario_id] = impact
 
     # Build output DataFrames
@@ -506,28 +508,28 @@ def aggregate(
     print("GENERATING OUTPUT CSVs")
     print("=" * 70)
 
-    # 1. daily_jdi.csv
-    daily_jdi_output = daily_jdi_df[
-        ["day_index", "date", "category", "E_loss", "JDI_baseline", "band"]
+    # 1. daily_risk.csv
+    daily_risk_output = daily_risk_df[
+        ["day_index", "date", "category", "E_loss", "risk_baseline", "band"]
     ].copy()
-    daily_jdi_output = daily_jdi_output.sort_values(["day_index", "category"])
-    print(f"\n1. daily_jdi.csv: {len(daily_jdi_output)} rows")
+    daily_risk_output = daily_risk_output.sort_values(["day_index", "category"])
+    print(f"\n1. daily_risk.csv: {len(daily_risk_output)} rows")
 
-    # 2. weekly_jdi.csv
-    weekly_jdi_rows = []
+    # 2. weekly_risk.csv
+    weekly_risk_rows = []
     for category in ["fresh", "fuel"]:
         row = {
             "category": category,
-            "weekly_JDI_baseline": weekly_baseline[category],
+            "weekly_risk_baseline": weekly_baseline[category],
         }
         for scenario_config in config.scenarios:
             scenario_id = scenario_config["id"]
-            col_name = f"weekly_JDI_{scenario_id}"
-            row[col_name] = weekly_jdis[scenario_id][category]
-        weekly_jdi_rows.append(row)
+            col_name = f"weekly_risk_{scenario_id}"
+            row[col_name] = weekly_risks[scenario_id][category]
+        weekly_risk_rows.append(row)
 
-    weekly_jdi_df = pd.DataFrame(weekly_jdi_rows)
-    print(f"2. weekly_jdi.csv: {len(weekly_jdi_df)} rows")
+    weekly_risk_df = pd.DataFrame(weekly_risk_rows)
+    print(f"2. weekly_risk.csv: {len(weekly_risk_df)} rows")
 
     # 3. scenario_impact.csv
     impact_rows = []
@@ -537,10 +539,10 @@ def aggregate(
             row = {
                 "scenario_id": scenario_id,
                 "category": category,
-                "weekly_JDI_baseline": weekly_baseline[category],
-                "weekly_JDI_scenario": weekly_jdis[scenario_id][category],
-                "delta_JDI": weekly_baseline[category]
-                - weekly_jdis[scenario_id][category],
+                "weekly_risk_baseline": weekly_baseline[category],
+                "weekly_risk_scenario": weekly_risks[scenario_id][category],
+                "delta_risk": weekly_baseline[category]
+                - weekly_risks[scenario_id][category],
                 "hours_avoided": impacts[scenario_id][category]["hours_avoided"],
                 "trailers_avoided": impacts[scenario_id][category]["trailers_avoided"],
             }
@@ -557,16 +559,16 @@ def aggregate(
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    daily_jdi_output.to_csv(output_dir / "daily_jdi.csv", index=False)
-    weekly_jdi_df.to_csv(output_dir / "weekly_jdi.csv", index=False)
+    daily_risk_output.to_csv(output_dir / "daily_risk.csv", index=False)
+    weekly_risk_df.to_csv(output_dir / "weekly_risk.csv", index=False)
     scenario_impact_df.to_csv(output_dir / "scenario_impact.csv", index=False)
     sailing_contrib_df.to_csv(output_dir / "sailing_contrib.csv", index=False)
 
     print(f"\n✓ All CSVs written to {output_dir}/")
 
     return {
-        "daily_jdi": daily_jdi_output,
-        "weekly_jdi": weekly_jdi_df,
+        "daily_risk": daily_risk_output,
+        "weekly_risk": weekly_risk_df,
         "scenario_impact": scenario_impact_df,
         "sailing_contrib": sailing_contrib_df,
     }
@@ -574,7 +576,7 @@ def aggregate(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Aggregate per-sailing predictions into JDI metrics"
+        description="Aggregate per-sailing predictions into risk metrics"
     )
     parser.add_argument(
         "--predictions",
@@ -614,10 +616,10 @@ def main():
         print("\n" + "=" * 70)
         print("SUMMARY")
         print("=" * 70)
-        print("Daily JDI sample:")
-        print(results["daily_jdi"].head(4).to_string(index=False))
-        print("\nWeekly JDI:")
-        print(results["weekly_jdi"].to_string(index=False))
+        print("Daily risk sample:")
+        print(results["daily_risk"].head(4).to_string(index=False))
+        print("\nWeekly risk:")
+        print(results["weekly_risk"].to_string(index=False))
         print("\nScenario Impact:")
         print(results["scenario_impact"].to_string(index=False))
         print("\n" + "=" * 70)
