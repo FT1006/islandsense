@@ -11,13 +11,15 @@ Usage:
 import argparse
 import json
 import pickle
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.isotonic import IsotonicRegression
-from sklearn.metrics import brier_score_loss, log_loss, roc_auc_score
+from sklearn.metrics import accuracy_score, brier_score_loss, log_loss, roc_auc_score
 
 from islandsense.config import get_config
 from islandsense.metrics import expected_calibration_error, print_calibration_bins
@@ -41,6 +43,203 @@ def load_dataset(config, quick_mode: bool = False) -> pd.DataFrame:
         df = df.sample(n=min(200, len(df)), random_state=42)
 
     return df
+
+
+def preflight_check(config, quick_mode: bool = False):
+    """Run pre-flight checks and log state before training.
+
+    Captures:
+    - Git commit hash and working tree status
+    - Data fingerprint (row counts, feature stats)
+    - Baseline metrics
+    - All validation checks
+
+    Args:
+        config: Configuration object
+        quick_mode: If True, note that this is a test run
+
+    Returns:
+        Dictionary containing manifest
+    """
+    print("\n" + "=" * 70)
+    print("PRE-FLIGHT CHECKS")
+    print("=" * 70)
+
+    manifest = {
+        "timestamp": datetime.now().astimezone().isoformat(),
+        "mode": "quick" if quick_mode else "full",
+        "checks": {},
+        "data_fingerprint": {},
+        "baseline_metrics": {},
+        "config_snapshot": config._data,
+    }
+
+    # Capture git state
+    try:
+        git_commit = (
+            subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL
+            )
+            .decode()
+            .strip()
+        )
+        git_status = (
+            subprocess.check_output(
+                ["git", "status", "--porcelain"], stderr=subprocess.DEVNULL
+            )
+            .decode()
+            .strip()
+        )
+        manifest["git_commit"] = git_commit
+        manifest["git_dirty"] = len(git_status) > 0
+        print(f"  Git commit: {git_commit[:8]}")
+        if manifest["git_dirty"]:
+            print("  ⚠️  Working tree has uncommitted changes")
+    except subprocess.CalledProcessError:
+        manifest["git_commit"] = "unknown"
+        manifest["git_dirty"] = True
+        print("  Git: not available")
+
+    # Check 1: CSVs present
+    print("\n[Check 1/6] Verifying source CSVs...")
+    csv_files = {
+        "sailings": config.sailings_file,
+        "status": config.status_file,
+        "metocean": config.metocean_file,
+        "tides": config.tides_file,
+        "exposure": config.exposure_file,
+    }
+
+    all_present = True
+    for name, path in csv_files.items():
+        exists = path.exists()
+        all_present = all_present and exists
+        status = "✓" if exists else "✗"
+        print(f"  {status} {name}.csv")
+
+    manifest["checks"]["csvs_present"] = all_present
+
+    # Check 2: Load dataset and verify
+    print("\n[Check 2/6] Loading training dataset...")
+    dataset_path = config.data_dir / "train_dataset.csv"
+    if not dataset_path.exists():
+        print(f"  ✗ {dataset_path} not found!")
+        manifest["checks"]["dataset_exists"] = False
+        return manifest
+
+    df = pd.read_csv(dataset_path)
+    manifest["checks"]["dataset_exists"] = True
+    print(f"  ✓ Loaded {len(df)} rows")
+
+    # Check 3: Feature validation
+    print("\n[Check 3/6] Validating features...")
+    feature_cols = [
+        "WOTDI",
+        "BSEF",
+        "gust_max_3h",
+        "tide_gate_margin",
+        "prior_24h_delay",
+        "day_of_week",
+        "month",
+    ]
+
+    has_nans = df[feature_cols].isna().any().any()
+    has_infs = np.isinf(df[feature_cols]).any().any()
+
+    manifest["checks"]["no_nans"] = not has_nans
+    manifest["checks"]["no_infs"] = not has_infs
+
+    print(f"  {'✓' if not has_nans else '✗'} No NaN values")
+    print(f"  {'✓' if not has_infs else '✗'} No infinite values")
+
+    # Capture feature statistics
+    manifest["data_fingerprint"] = {
+        "total_rows": len(df),
+        "train_rows": int((df["split"] == "train").sum()),
+        "calib_rows": int((df["split"] == "calib").sum()),
+        "test_rows": int((df["split"] == "test").sum()),
+        "disruption_rate": float(df["disruption"].mean()),
+        "feature_ranges": {
+            col: {
+                "min": float(df[col].min()),
+                "max": float(df[col].max()),
+                "mean": float(df[col].mean()),
+            }
+            for col in feature_cols
+        },
+    }
+
+    # Check 4: Time-based split
+    print("\n[Check 4/6] Verifying time-based split...")
+    df["etd_parsed"] = pd.to_datetime(df["etd"])
+    train_max = df[df["split"] == "train"]["etd_parsed"].max()
+    calib_min = df[df["split"] == "calib"]["etd_parsed"].min()
+    calib_max = df[df["split"] == "calib"]["etd_parsed"].max()
+    test_min = df[df["split"] == "test"]["etd_parsed"].min()
+
+    time_based = train_max <= calib_min and calib_max <= test_min
+    manifest["checks"]["time_based_split"] = bool(time_based)
+
+    print(f"  Train ends:   {train_max.date()}")
+    print(f"  Calib starts: {calib_min.date()}")
+    print(f"  Calib ends:   {calib_max.date()}")
+    print(f"  Test starts:  {test_min.date()}")
+    print(f"  {'✓' if time_based else '✗'} Chronological (no overlap)")
+
+    # Check 5: Baseline metrics
+    print("\n[Check 5/6] Computing baseline heuristic...")
+    test_df = df[df["split"] == "test"]
+    y_true = test_df["disruption"].values
+
+    # Baseline rule
+    BSEF_THRESHOLD = 2.0
+    GUST_THRESHOLD = 40.0
+    y_pred = (
+        (test_df["BSEF"] > BSEF_THRESHOLD) | (test_df["gust_max_3h"] > GUST_THRESHOLD)
+    ).astype(int)
+    y_prob = y_pred * 0.8 + (1 - y_pred) * 0.2
+
+    baseline_brier = brier_score_loss(y_true, y_prob)
+    baseline_acc = accuracy_score(y_true, y_pred)
+
+    manifest["baseline_metrics"] = {
+        "rule": f"(BSEF > {BSEF_THRESHOLD}) OR (gust_max_3h > {GUST_THRESHOLD} kts)",
+        "test_set_size": len(test_df),
+        "test_disruptions": int(y_true.sum()),
+        "brier": float(baseline_brier),
+        "accuracy": float(baseline_acc),
+    }
+
+    print(f"  Rule: (BSEF > {BSEF_THRESHOLD}) OR (gust > {GUST_THRESHOLD} kts)")
+    print(f"  Brier: {baseline_brier:.3f}")
+    print(f"  Accuracy: {baseline_acc:.3f}")
+
+    # Check 6: Config validation
+    print("\n[Check 6/6] Validating config...")
+    has_random_seed = config.random_seed is not None
+    manifest["checks"]["has_random_seed"] = has_random_seed
+    print(f"  {'✓' if has_random_seed else '✗'} Random seed: {config.random_seed}")
+
+    # Summary
+    print("\n" + "=" * 70)
+    all_checks_passed = all(manifest["checks"].values())
+    if all_checks_passed:
+        print("✅ ALL PRE-FLIGHT CHECKS PASSED")
+    else:
+        print("⚠️  SOME CHECKS FAILED - Review above")
+    print("=" * 70)
+
+    # Save manifest
+    models_dir = Path("models")
+    models_dir.mkdir(exist_ok=True)
+    manifest_path = models_dir / "training_manifest.json"
+
+    with open(manifest_path, "w") as f:
+        json.dump(manifest, f, indent=2)
+
+    print(f"\n📋 Manifest saved to {manifest_path}")
+
+    return manifest
 
 
 def prepare_features(df: pd.DataFrame):
@@ -313,6 +512,9 @@ def main():
 
     # Load config
     config = get_config()
+
+    # Pre-flight checks
+    preflight_check(config, quick_mode=args.quick)
 
     # Load dataset
     df = load_dataset(config, quick_mode=args.quick)
