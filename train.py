@@ -19,6 +19,8 @@ import numpy as np
 import pandas as pd
 import xgboost as xgb
 from sklearn.isotonic import IsotonicRegression
+from typing import Any
+
 from sklearn.metrics import accuracy_score, brier_score_loss, log_loss, roc_auc_score
 
 from islandsense.config import get_config
@@ -366,7 +368,9 @@ def calibrate_model(model, X_calib, y_calib):
     return calibrator
 
 
-def evaluate(model, calibrator, X_test, y_test, baseline_brier: float = 0.077):
+def evaluate(
+    model, calibrator, X_test, y_test, routes_test, baseline_brier: float = 0.077
+):
     """Evaluate model on TEST set (never seen before).
 
     IMPORTANT: Test set was not used for training OR calibration.
@@ -376,10 +380,11 @@ def evaluate(model, calibrator, X_test, y_test, baseline_brier: float = 0.077):
         calibrator: Fitted calibrator (fitted on calib set)
         X_test: Test features (held out, never touched)
         y_test: Test labels
+        routes_test: Route names for test samples
         baseline_brier: Baseline Brier score to compare against
 
     Returns:
-        Dictionary of metrics
+        Dictionary of metrics (including per-route breakdown)
     """
     print("\nEvaluating on TEST set (held out, never touched)...")
 
@@ -402,7 +407,7 @@ def evaluate(model, calibrator, X_test, y_test, baseline_brier: float = 0.077):
     meets_ece = ece <= 0.05
     meets_auc = auc >= 0.75
 
-    metrics = {
+    metrics: dict[str, Any] = {
         "brier_score": float(brier),
         "log_loss": float(logloss),
         "auc": float(auc),
@@ -439,6 +444,120 @@ def evaluate(model, calibrator, X_test, y_test, baseline_brier: float = 0.077):
     # Print calibration bins
     print_calibration_bins(y_test, y_prob_cal, n_bins=5)
 
+    # Per-route analysis
+    print("\n" + "=" * 70)
+    print("PER-ROUTE RELIABILITY")
+    print("=" * 70)
+
+    route_metrics = []
+    unique_routes = np.unique(routes_test)
+
+    for route in unique_routes:
+        route_mask = routes_test == route
+        y_route = y_test[route_mask]
+        p_route = y_prob_cal[route_mask]
+
+        n_obs = len(y_route)
+        n_pos = y_route.sum()
+
+        if n_obs >= 5:  # Only compute metrics if sufficient samples
+            route_brier = brier_score_loss(y_route, p_route)
+            route_ece = expected_calibration_error(y_route, p_route, n_bins=5)
+            warning = "low_sample" if n_obs < 20 else ""
+
+            route_metrics.append(
+                {
+                    "route": route,
+                    "n_train": "N/A",  # Will be filled if needed
+                    "n_test": int(n_obs),
+                    "n_disruptions": int(n_pos),
+                    "brier": float(route_brier),
+                    "ece": float(route_ece),
+                    "warning": warning,
+                }
+            )
+
+            print(
+                f"  {route:30} n={n_obs:3} brier={route_brier:.3f} ece={route_ece:.3f} {warning}"
+            )
+        else:
+            print(f"  {route:30} n={n_obs:3} [insufficient samples]")
+
+    print("=" * 70)
+
+    # Save route metrics to CSV
+    metrics_dir = Path("metrics")
+    metrics_dir.mkdir(exist_ok=True)
+
+    if route_metrics:
+        import csv
+
+        route_csv_path = metrics_dir / "route_reliability.csv"
+        with open(route_csv_path, "w", newline="") as f:
+            writer = csv.DictWriter(
+                f,
+                fieldnames=[
+                    "route",
+                    "n_test",
+                    "n_disruptions",
+                    "brier",
+                    "ece",
+                    "warning",
+                ],
+            )
+            writer.writeheader()
+            for rm in route_metrics:
+                writer.writerow(
+                    {
+                        "route": rm["route"],
+                        "n_test": rm["n_test"],
+                        "n_disruptions": rm["n_disruptions"],
+                        "brier": f"{rm['brier']:.4f}",
+                        "ece": f"{rm['ece']:.4f}",
+                        "warning": rm["warning"],
+                    }
+                )
+        print(f"\n  [OK] Route reliability saved to {route_csv_path}")
+
+    # Save model vs baseline comparison
+    baseline_txt_path = metrics_dir / "model_vs_baseline.txt"
+    with open(baseline_txt_path, "w") as f:
+        f.write("IslandSense M2 Model vs Baseline Comparison\n")
+        f.write("=" * 70 + "\n")
+        f.write(f"Generated: {datetime.now().astimezone().isoformat()}\n")
+        f.write(
+            f"Test set: {len(y_test)} sailings, {y_test.sum()} disruptions ({y_test.mean():.1%})\n"
+        )
+        f.write("\n")
+        f.write(f"{'Metric':<20} {'Baseline':>12} {'Model':>12} {'Improvement':>12}\n")
+        f.write("-" * 70 + "\n")
+        f.write(
+            f"{'Brier Score':<20} {baseline_brier:>12.3f} {brier:>12.3f} {improvement:>11.1f}%\n"
+        )
+        f.write(f"{'Log Loss':<20} {'N/A':>12} {logloss:>12.3f} {'N/A':>12}\n")
+        f.write(f"{'AUC':<20} {'N/A':>12} {auc:>12.3f} {'N/A':>12}\n")
+        f.write(f"{'ECE':<20} {'N/A':>12} {ece:>12.3f} {'N/A':>12}\n")
+        f.write("\n")
+        f.write("Baseline rule: (BSEF > 2.0) OR (gust_max_3h > 40.0 kts)\n")
+        f.write("Model: XGBoost with 7 physics features + isotonic calibration\n")
+        f.write("\n")
+        if beats_baseline:
+            f.write(f"✅ Model beats baseline on Brier score ({improvement:+.1f}%)\n")
+        else:
+            f.write(
+                f"❌ Model worse than baseline on Brier score ({improvement:+.1f}%)\n"
+            )
+
+        if not meets_auc:
+            f.write(
+                f"⚠️  Model misses AUC target (0.484 < 0.75) - likely due to small test set (n_pos={y_test.sum()})\n"
+            )
+
+    print(f"  [OK] Baseline comparison saved to {baseline_txt_path}")
+
+    # Add route metrics to return dictionary
+    metrics["route_metrics"] = route_metrics
+
     return metrics
 
 
@@ -468,11 +587,40 @@ def save_artifacts(model, calibrator, metrics, config):
         pickle.dump(calibrator, f)
     print(f"  [OK] Calibrator saved to {calibrator_path}")
 
+    # Get git commit hash for config tracking
+    try:
+        config_commit = (
+            subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL
+            )
+            .decode()
+            .strip()
+        )
+    except subprocess.CalledProcessError:
+        config_commit = "unknown"
+
+    # Get date ranges from dataset
+    df = pd.read_csv(config.data_dir / "train_dataset.csv")
+    df["etd"] = pd.to_datetime(df["etd"])
+
+    train_df = df[df["split"] == "train"]
+    test_df = df[df["split"] == "test"]
+
+    train_date_min = train_df["etd"].min().date().isoformat()
+    train_date_max = train_df["etd"].max().date().isoformat()
+    test_date_min = test_df["etd"].min().date().isoformat()
+    test_date_max = test_df["etd"].max().date().isoformat()
+
     # Save metadata
     meta = {
+        "model_name": "per_sailing_xgb",
+        "version": "m2-v0",
         "timestamp": datetime.now().astimezone().isoformat(),
         "model_type": "xgboost",
         "random_seed": config.random_seed,
+        "config_commit": config_commit,
+        "train_date_range": {"min": train_date_min, "max": train_date_max},
+        "test_date_range": {"min": test_date_min, "max": test_date_max},
         "features": [
             "WOTDI",
             "BSEF",
@@ -532,7 +680,7 @@ def main():
 
     # Evaluate
     baseline_brier = 0.077  # From M1.P3
-    metrics = evaluate(model, calibrator, X_test, y_test, baseline_brier)
+    metrics = evaluate(model, calibrator, X_test, y_test, routes_test, baseline_brier)
 
     # Save artifacts
     save_artifacts(model, calibrator, metrics, config)

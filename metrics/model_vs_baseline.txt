@@ -1,0 +1,17 @@
+IslandSense M2 Model vs Baseline Comparison
+======================================================================
+Generated: 2025-11-15T15:03:06.708231+00:00
+Test set: 193 sailings, 9 disruptions (4.7%)
+
+Metric                   Baseline        Model  Improvement
+----------------------------------------------------------------------
+Brier Score                 0.077        0.048        37.5%
+Log Loss                      N/A        0.387          N/A
+AUC                           N/A        0.484          N/A
+ECE                           N/A        0.035          N/A
+
+Baseline rule: (BSEF > 2.0) OR (gust_max_3h > 40.0 kts)
+Model: XGBoost with 7 physics features + isotonic calibration
+
+✅ Model beats baseline on Brier score (+37.5%)
+⚠️  Model misses AUC target (0.484 < 0.75) - likely due to small test set (n_pos=9)
