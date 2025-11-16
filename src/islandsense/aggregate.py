@@ -10,12 +10,13 @@ This module converts per_sailing_predictions.csv into:
 import argparse
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Any
 
 import pandas as pd
 import numpy as np
 
 from islandsense.config import get_config
+from islandsense.optimizer import optimize_scenarios as run_optimizer
 
 
 def load_predictions(predictions_path: Path) -> pd.DataFrame:
@@ -360,21 +361,24 @@ def compute_sailing_contributions(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         DataFrame with per-sailing contributions
     """
-    contrib_df = df[
-        [
-            "sailing_id",
-            "day_index",
-            "date",
-            "route",
-            "vessel",
-            "etd_iso",
-            "p_sail",
-            "fresh_units",
-            "fuel_units",
-            "contrib_fresh",
-            "contrib_fuel",
-        ]
-    ].copy()
+    # Base columns always present
+    base_cols = [
+        "sailing_id",
+        "day_index",
+        "date",
+        "route",
+        "vessel",
+        "etd_iso",
+        "p_sail",
+        "fresh_units",
+        "fuel_units",
+        "contrib_fresh",
+        "contrib_fuel",
+    ]
+    # Optional feature columns (add if present)
+    optional_cols = ["WOTDI", "BSEF", "gust_max_3h", "tide_gate_margin"]
+    cols_to_include = base_cols + [c for c in optional_cols if c in df.columns]
+    contrib_df = df[cols_to_include].copy()
 
     # Sort by total contribution (Fresh + Fuel) for honest "top risk" ranking
     contrib_df["contrib_total"] = (
@@ -512,6 +516,22 @@ def aggregate(
     print(f"  Fresh: {weekly_baseline['fresh']}")
     print(f"  Fuel: {weekly_baseline['fuel']}")
 
+    # Run prescriptive optimizer to get optimal policy
+    print("\nRunning prescriptive optimizer...")
+    optimizer_result: Dict[str, Any] = {}
+    opt_cfg = config.optimizer
+    if opt_cfg and opt_cfg.get("enabled", False):
+        optimizer_result = run_optimizer(df, config)
+        print(
+            f"  Optimal policy: forward {optimizer_result['forward_frac'] * 100:.0f}%"
+        )
+        print(
+            f"  alpha_eff: fresh={optimizer_result['alpha_eff']['fresh']:.3f}, fuel={optimizer_result['alpha_eff']['fuel']:.3f}"
+        )
+        print(f"  Net benefit: {optimizer_result['net_benefit_total']:.2f}")
+    else:
+        print("  Optimizer disabled, using config scenarios as-is")
+
     # Process each scenario
     print("\nProcessing scenarios...")
     scenario_results = {}
@@ -519,10 +539,35 @@ def aggregate(
     impacts = {}
     red_days_by_scenario = {"baseline": count_red_days(daily_risk_df)}
     sailing_deltas_by_scenario = {}
+    scenario_metadata: Dict[str, Dict[str, Any]] = {}  # Store policy info per scenario
 
     for scenario_config in config.scenarios:
+        # Override scenario_A with optimizer results if available
+        if scenario_config["id"] == "scenario_A" and optimizer_result:
+            scenario_config = scenario_config.copy()
+            scenario_config["alpha"] = optimizer_result["alpha_eff"]
+            scenario_config["name"] = (
+                f"Optimized: forward {optimizer_result['forward_frac'] * 100:.0f}%"
+            )
+            scenario_config["forward_frac"] = optimizer_result["forward_frac"]
+            scenario_config["air_frac"] = optimizer_result.get("air_frac", 0.0)
+            print("\n  [OPTIMIZED] Scenario: scenario_A")
+        else:
+            print(f"\n  Scenario: {scenario_config['id']} ({scenario_config['name']})")
+
+        # Store metadata for this scenario
         scenario_id = scenario_config["id"]
-        print(f"\n  Scenario: {scenario_id} ({scenario_config['name']})")
+        # Infer forward_frac from alpha if not set (assume alpha_fresh ≈ 0.7 * forward_frac)
+        fwd_frac = scenario_config.get("forward_frac", 0.0)
+        if fwd_frac == 0.0 and scenario_config["alpha"].get("fresh", 0) > 0:
+            # Rough estimate: alpha_eff = beta_forward * x, assume beta_forward ≈ 0.7
+            fwd_frac = scenario_config["alpha"]["fresh"] / 0.7
+        scenario_metadata[scenario_id] = {
+            "forward_frac": fwd_frac,
+            "air_frac": scenario_config.get("air_frac", 0.0),
+            "alpha": scenario_config["alpha"],
+            "name": scenario_config["name"],
+        }
 
         # Apply scenario
         scenario_df, weekly_risk = apply_scenario(
@@ -601,11 +646,15 @@ def aggregate(
 
     # 3. scenario_impact.csv
     impact_rows = []
-    for scenario_config in config.scenarios:
-        scenario_id = scenario_config["id"]
+    for scenario_id in scenario_metadata.keys():
+        meta = scenario_metadata[scenario_id]
         for category in ["fresh", "fuel"]:
             row = {
                 "scenario_id": scenario_id,
+                "scenario_name": meta["name"],
+                "forward_frac": meta["forward_frac"],
+                "air_frac": meta["air_frac"],
+                "alpha": meta["alpha"].get(category, 0.0),
                 "category": category,
                 "weekly_risk_baseline": weekly_baseline[category],
                 "weekly_risk_scenario": weekly_risks[scenario_id][category],
@@ -627,11 +676,22 @@ def aggregate(
 
     # 5. sailing_scenario_deltas.csv (per-sailing deltas for each scenario)
     sailing_delta_rows = []
-    for scenario_config in config.scenarios:
-        scenario_id = scenario_config["id"]
+    for scenario_id in scenario_metadata.keys():
+        meta = scenario_metadata[scenario_id]
         deltas_df = sailing_deltas_by_scenario[scenario_id]
         deltas_df = deltas_df.copy()
         deltas_df["scenario_id"] = scenario_id
+        # Add per-sailing suggested action based on forward fraction
+        forward_frac = meta["forward_frac"]
+        if forward_frac > 0:
+            deltas_df["suggested_action"] = deltas_df.apply(
+                lambda row: f"Bring forward {forward_frac * 100:.0f}% ({row['fresh_units'] * forward_frac:.1f} pal, {row['fuel_units'] * forward_frac:.2f} tr)"
+                if (row["delta_fresh"] > 0 or row["delta_fuel"] > 0)
+                else "No action (zero risk)",
+                axis=1,
+            )
+        else:
+            deltas_df["suggested_action"] = "No action"
         sailing_delta_rows.append(deltas_df)
 
     sailing_scenario_deltas_df = pd.concat(sailing_delta_rows, ignore_index=True)

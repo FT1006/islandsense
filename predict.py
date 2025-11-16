@@ -219,6 +219,12 @@ def predict(
     predictions_df["p_sail_uncal"] = y_prob_uncal
     predictions_df["p_sail"] = y_prob_cal
 
+    # Add feature columns (WOTDI, BSEF, gust_max_3h, tide_gate_margin)
+    predictions_df["WOTDI"] = features_df["WOTDI"].values
+    predictions_df["BSEF"] = features_df["BSEF"].values
+    predictions_df["gust_max_3h"] = features_df["gust_max_3h"].values
+    predictions_df["tide_gate_margin"] = features_df["tide_gate_margin"].values
+
     # Merge exposure
     predictions_df = predictions_df.merge(
         exposure_df[
@@ -263,6 +269,10 @@ def predict(
         "p_sail",
         "fresh_units",
         "fuel_units",
+        "WOTDI",
+        "BSEF",
+        "gust_max_3h",
+        "tide_gate_margin",
     ]
 
     predictions_df = predictions_df[output_cols]

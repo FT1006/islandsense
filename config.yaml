@@ -26,10 +26,10 @@ risk:
   categories:
     fresh:
       expected_loss_min: 0.0
-      expected_loss_max: 100.0
+      expected_loss_max: 25.0   # Scale down for better demo presentation (weekly avg ~10-40)
     fuel:
       expected_loss_min: 0.0
-      expected_loss_max: 100.0
+      expected_loss_max: 0.3    # Scale down for better demo presentation
   bands:
     green:
       label: "Green"
@@ -49,6 +49,8 @@ scenarios:
       fuel: 0.15
   - id: "scenario_B"
     name: "Bring forward 10% + air-lift 5%"
+    forward_frac: 0.10   # 10% forward
+    air_frac: 0.05       # 5% air-lift
     alpha:
       fresh: 0.30
       fuel: 0.25
