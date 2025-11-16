@@ -1,0 +1,5 @@
+scenario_id,scenario_name,forward_frac,air_frac,alpha,category,weekly_risk_baseline,weekly_risk_scenario,delta_risk,hours_avoided,trailers_avoided,red_days_baseline,red_days_scenario
+scenario_A,Optimized: forward 10%,0.1,0.0,0.06999999999999999,fresh,20,19,1,4.9,0.0,1,1
+scenario_A,Optimized: forward 10%,0.1,0.0,0.05,fuel,25,23,2,0.0,0.0,1,1
+scenario_B,Bring forward 10% + air-lift 5%,0.1,0.05,0.3,fresh,20,14,6,20.9,0.0,1,0
+scenario_B,Bring forward 10% + air-lift 5%,0.1,0.05,0.25,fuel,25,19,6,0.0,0.0,1,0

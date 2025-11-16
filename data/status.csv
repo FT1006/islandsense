@@ -1,0 +1,1285 @@
+sailing_id,status,delay_min
+Portsmouth_Jersey_20250518_1800_0,arrived,64
+Portsmouth_Jersey_20250518_0600_1,arrived,8
+St. Malo_Jersey_20250518_0600_2,arrived,13
+St. Malo_Jersey_20250518_1200_3,arrived,7
+St. Malo_Jersey_20250518_1800_4,arrived,75
+Poole_Jersey_20250518_1800_5,arrived,3
+Portsmouth_Jersey_20250519_0600_6,arrived,75
+Portsmouth_Jersey_20250519_1200_7,arrived,13
+St. Malo_Jersey_20250519_0600_8,arrived,11
+St. Malo_Jersey_20250519_1800_9,arrived,6
+Poole_Jersey_20250519_0600_10,arrived,1
+Poole_Jersey_20250519_1800_11,arrived,5
+Portsmouth_Jersey_20250520_1200_12,arrived,3
+Portsmouth_Jersey_20250520_0600_13,arrived,20
+Portsmouth_Jersey_20250520_1800_14,arrived,45
+St. Malo_Jersey_20250520_0600_15,arrived,7
+St. Malo_Jersey_20250520_1800_16,arrived,4
+Poole_Jersey_20250520_0600_17,arrived,11
+Portsmouth_Jersey_20250521_1800_18,arrived,6
+Portsmouth_Jersey_20250521_0600_19,arrived,12
+St. Malo_Jersey_20250521_1200_20,arrived,5
+St. Malo_Jersey_20250521_1800_21,arrived,3
+St. Malo_Jersey_20250521_0600_22,arrived,45
+Poole_Jersey_20250521_0600_23,arrived,9
+Poole_Jersey_20250521_1800_24,arrived,70
+Portsmouth_Jersey_20250522_1200_25,arrived,10
+Portsmouth_Jersey_20250522_1800_26,arrived,61
+Portsmouth_Jersey_20250522_0600_27,arrived,8
+St. Malo_Jersey_20250522_1200_28,arrived,11
+St. Malo_Jersey_20250522_1800_29,arrived,12
+Poole_Jersey_20250522_1200_30,arrived,13
+Poole_Jersey_20250522_0600_31,arrived,9
+Poole_Jersey_20250522_1800_32,arrived,9
+Portsmouth_Jersey_20250523_1800_33,arrived,1
+Portsmouth_Jersey_20250523_1200_34,arrived,89
+Portsmouth_Jersey_20250523_0600_35,arrived,74
+St. Malo_Jersey_20250523_1200_36,arrived,13
+St. Malo_Jersey_20250523_1800_37,arrived,3
+St. Malo_Jersey_20250523_0600_38,arrived,1
+Poole_Jersey_20250523_1800_39,arrived,5
+Poole_Jersey_20250523_0600_40,arrived,59
+Portsmouth_Jersey_20250524_1200_41,arrived,9
+Portsmouth_Jersey_20250524_0600_42,arrived,11
+St. Malo_Jersey_20250524_0600_43,arrived,13
+St. Malo_Jersey_20250524_1800_44,arrived,11
+St. Malo_Jersey_20250524_1200_45,arrived,166
+Poole_Jersey_20250524_1200_46,arrived,0
+Poole_Jersey_20250524_1800_47,arrived,4
+Portsmouth_Jersey_20250525_1200_48,arrived,0
+Portsmouth_Jersey_20250525_1800_49,arrived,3
+Portsmouth_Jersey_20250525_0600_50,arrived,1
+St. Malo_Jersey_20250525_0600_51,arrived,11
+Poole_Jersey_20250525_1800_52,arrived,24
+Poole_Jersey_20250525_1200_53,arrived,13
+Poole_Jersey_20250525_0600_54,arrived,8
+Portsmouth_Jersey_20250526_0600_55,arrived,1
+Portsmouth_Jersey_20250526_1200_56,arrived,13
+St. Malo_Jersey_20250526_1200_57,arrived,83
+St. Malo_Jersey_20250526_1800_58,arrived,1
+Poole_Jersey_20250526_1800_59,arrived,9
+Poole_Jersey_20250526_1200_60,arrived,4
+Poole_Jersey_20250526_0600_61,arrived,1
+Portsmouth_Jersey_20250527_1200_62,arrived,11
+Portsmouth_Jersey_20250527_1800_63,arrived,12
+Portsmouth_Jersey_20250527_0600_64,arrived,24
+St. Malo_Jersey_20250527_1200_65,arrived,68
+St. Malo_Jersey_20250527_0600_66,arrived,9
+Poole_Jersey_20250527_1800_67,arrived,37
+Poole_Jersey_20250527_0600_68,arrived,182
+Poole_Jersey_20250527_1200_69,arrived,60
+Portsmouth_Jersey_20250528_1200_70,arrived,4
+Portsmouth_Jersey_20250528_0600_71,arrived,4
+Portsmouth_Jersey_20250528_1800_72,arrived,8
+St. Malo_Jersey_20250528_0600_73,arrived,3
+St. Malo_Jersey_20250528_1200_74,cancelled,0
+St. Malo_Jersey_20250528_1800_75,arrived,271
+Poole_Jersey_20250528_1800_76,arrived,13
+Poole_Jersey_20250528_1200_77,arrived,2
+Portsmouth_Jersey_20250529_1200_78,arrived,1
+Portsmouth_Jersey_20250529_0600_79,arrived,70
+St. Malo_Jersey_20250529_1200_80,arrived,10
+St. Malo_Jersey_20250529_0600_81,arrived,59
+Poole_Jersey_20250529_0600_82,arrived,5
+Poole_Jersey_20250529_1800_83,arrived,13
+Portsmouth_Jersey_20250530_1200_84,arrived,10
+Portsmouth_Jersey_20250530_1800_85,arrived,59
+St. Malo_Jersey_20250530_1800_86,arrived,17
+St. Malo_Jersey_20250530_0600_87,arrived,0
+Poole_Jersey_20250530_1800_88,arrived,1
+Poole_Jersey_20250530_1200_89,arrived,8
+Poole_Jersey_20250530_0600_90,arrived,62
+Portsmouth_Jersey_20250531_0600_91,arrived,0
+St. Malo_Jersey_20250531_1200_92,arrived,2
+St. Malo_Jersey_20250531_0600_93,arrived,11
+St. Malo_Jersey_20250531_1800_94,arrived,14
+Poole_Jersey_20250531_1200_95,arrived,4
+Poole_Jersey_20250531_0600_96,arrived,11
+Portsmouth_Jersey_20250601_0600_97,arrived,6
+Portsmouth_Jersey_20250601_1200_98,arrived,1
+St. Malo_Jersey_20250601_1200_99,arrived,11
+St. Malo_Jersey_20250601_1800_100,arrived,3
+Poole_Jersey_20250601_1200_101,arrived,2
+Poole_Jersey_20250601_1800_102,arrived,14
+Portsmouth_Jersey_20250602_0600_103,arrived,13
+Portsmouth_Jersey_20250602_1200_104,arrived,1
+Portsmouth_Jersey_20250602_1800_105,arrived,3
+St. Malo_Jersey_20250602_1200_106,arrived,2
+Poole_Jersey_20250602_1200_107,arrived,89
+Poole_Jersey_20250602_0600_108,arrived,11
+Poole_Jersey_20250602_1800_109,arrived,1
+Portsmouth_Jersey_20250603_0600_110,arrived,68
+Portsmouth_Jersey_20250603_1200_111,arrived,9
+Portsmouth_Jersey_20250603_1800_112,arrived,1
+St. Malo_Jersey_20250603_1200_113,arrived,3
+Poole_Jersey_20250603_0600_114,arrived,6
+Poole_Jersey_20250603_1200_115,arrived,82
+Portsmouth_Jersey_20250604_1200_116,arrived,56
+Portsmouth_Jersey_20250604_0600_117,arrived,8
+St. Malo_Jersey_20250604_1800_118,arrived,46
+St. Malo_Jersey_20250604_0600_119,arrived,14
+Poole_Jersey_20250604_1800_120,arrived,10
+Poole_Jersey_20250604_0600_121,arrived,53
+Portsmouth_Jersey_20250605_1200_122,arrived,1
+Portsmouth_Jersey_20250605_0600_123,arrived,161
+Portsmouth_Jersey_20250605_1800_124,arrived,14
+St. Malo_Jersey_20250605_0600_125,arrived,183
+St. Malo_Jersey_20250605_1200_126,arrived,161
+Poole_Jersey_20250605_1200_127,arrived,265
+Poole_Jersey_20250605_1800_128,arrived,13
+Portsmouth_Jersey_20250606_1800_129,arrived,49
+Portsmouth_Jersey_20250606_0600_130,arrived,11
+Portsmouth_Jersey_20250606_1200_131,arrived,1
+St. Malo_Jersey_20250606_1200_132,arrived,8
+St. Malo_Jersey_20250606_1800_133,arrived,0
+Poole_Jersey_20250606_1200_134,arrived,0
+Poole_Jersey_20250606_1800_135,arrived,36
+Portsmouth_Jersey_20250607_1200_136,arrived,10
+Portsmouth_Jersey_20250607_1800_137,arrived,0
+Portsmouth_Jersey_20250607_0600_138,arrived,7
+St. Malo_Jersey_20250607_0600_139,arrived,83
+St. Malo_Jersey_20250607_1800_140,arrived,4
+St. Malo_Jersey_20250607_1200_141,arrived,9
+Poole_Jersey_20250607_0600_142,arrived,87
+Poole_Jersey_20250607_1200_143,arrived,2
+Portsmouth_Jersey_20250608_1800_144,arrived,7
+Portsmouth_Jersey_20250608_0600_145,arrived,12
+Portsmouth_Jersey_20250608_1200_146,arrived,10
+St. Malo_Jersey_20250608_1200_147,arrived,13
+St. Malo_Jersey_20250608_0600_148,arrived,6
+St. Malo_Jersey_20250608_1800_149,arrived,11
+Poole_Jersey_20250608_0600_150,arrived,24
+Poole_Jersey_20250608_1800_151,arrived,3
+Portsmouth_Jersey_20250609_1800_152,arrived,1
+St. Malo_Jersey_20250609_1200_153,arrived,9
+St. Malo_Jersey_20250609_0600_154,arrived,5
+Poole_Jersey_20250609_1200_155,arrived,37
+Poole_Jersey_20250609_1800_156,arrived,86
+Portsmouth_Jersey_20250610_0600_157,arrived,10
+Portsmouth_Jersey_20250610_1800_158,arrived,44
+St. Malo_Jersey_20250610_1200_159,arrived,58
+St. Malo_Jersey_20250610_0600_160,arrived,55
+St. Malo_Jersey_20250610_1800_161,arrived,29
+Poole_Jersey_20250610_1800_162,arrived,8
+Poole_Jersey_20250610_0600_163,arrived,14
+Portsmouth_Jersey_20250611_1200_164,arrived,5
+Portsmouth_Jersey_20250611_1800_165,arrived,5
+St. Malo_Jersey_20250611_1200_166,arrived,9
+St. Malo_Jersey_20250611_0600_167,arrived,85
+St. Malo_Jersey_20250611_1800_168,arrived,3
+Poole_Jersey_20250611_1200_169,arrived,0
+Poole_Jersey_20250611_0600_170,arrived,14
+Portsmouth_Jersey_20250612_0600_171,arrived,4
+Portsmouth_Jersey_20250612_1200_172,arrived,79
+St. Malo_Jersey_20250612_0600_173,arrived,7
+St. Malo_Jersey_20250612_1800_174,arrived,7
+St. Malo_Jersey_20250612_1200_175,arrived,6
+Poole_Jersey_20250612_1200_176,arrived,11
+Portsmouth_Jersey_20250613_0600_177,arrived,7
+Portsmouth_Jersey_20250613_1200_178,arrived,11
+Portsmouth_Jersey_20250613_1800_179,arrived,2
+St. Malo_Jersey_20250613_1200_180,arrived,13
+Poole_Jersey_20250613_0600_181,arrived,4
+Portsmouth_Jersey_20250614_1800_182,arrived,7
+Portsmouth_Jersey_20250614_1200_183,arrived,5
+Portsmouth_Jersey_20250614_0600_184,arrived,31
+St. Malo_Jersey_20250614_1200_185,arrived,10
+St. Malo_Jersey_20250614_1800_186,arrived,13
+Poole_Jersey_20250614_1800_187,arrived,4
+Poole_Jersey_20250614_1200_188,arrived,24
+Portsmouth_Jersey_20250615_1200_189,arrived,87
+St. Malo_Jersey_20250615_1200_190,arrived,7
+St. Malo_Jersey_20250615_1800_191,arrived,14
+Poole_Jersey_20250615_1200_192,arrived,14
+Poole_Jersey_20250615_0600_193,arrived,4
+Poole_Jersey_20250615_1800_194,arrived,43
+Portsmouth_Jersey_20250616_1800_195,arrived,292
+Portsmouth_Jersey_20250616_0600_196,arrived,7
+Portsmouth_Jersey_20250616_1200_197,arrived,4
+St. Malo_Jersey_20250616_0600_198,arrived,5
+St. Malo_Jersey_20250616_1800_199,arrived,67
+Poole_Jersey_20250616_1200_200,arrived,5
+Poole_Jersey_20250616_0600_201,arrived,3
+Portsmouth_Jersey_20250617_1200_202,arrived,25
+Portsmouth_Jersey_20250617_0600_203,arrived,14
+Portsmouth_Jersey_20250617_1800_204,arrived,2
+St. Malo_Jersey_20250617_0600_205,arrived,1
+St. Malo_Jersey_20250617_1200_206,arrived,13
+St. Malo_Jersey_20250617_1800_207,arrived,81
+Poole_Jersey_20250617_1800_208,arrived,2
+Poole_Jersey_20250617_1200_209,arrived,15
+Poole_Jersey_20250617_0600_210,arrived,13
+Portsmouth_Jersey_20250618_0600_211,arrived,7
+Portsmouth_Jersey_20250618_1800_212,arrived,14
+Portsmouth_Jersey_20250618_1200_213,arrived,0
+St. Malo_Jersey_20250618_1200_214,arrived,9
+St. Malo_Jersey_20250618_0600_215,arrived,21
+Poole_Jersey_20250618_1800_216,arrived,8
+Poole_Jersey_20250618_1200_217,arrived,10
+Portsmouth_Jersey_20250619_0600_218,arrived,6
+St. Malo_Jersey_20250619_0600_219,arrived,0
+St. Malo_Jersey_20250619_1200_220,arrived,7
+St. Malo_Jersey_20250619_1800_221,arrived,5
+Poole_Jersey_20250619_1800_222,arrived,10
+Poole_Jersey_20250619_0600_223,arrived,30
+Poole_Jersey_20250619_1200_224,arrived,9
+Portsmouth_Jersey_20250620_0600_225,arrived,66
+Portsmouth_Jersey_20250620_1800_226,arrived,8
+Portsmouth_Jersey_20250620_1200_227,arrived,7
+St. Malo_Jersey_20250620_1200_228,arrived,1
+St. Malo_Jersey_20250620_0600_229,arrived,8
+Poole_Jersey_20250620_1200_230,arrived,5
+Portsmouth_Jersey_20250621_1800_231,arrived,135
+Portsmouth_Jersey_20250621_1200_232,arrived,16
+St. Malo_Jersey_20250621_1800_233,arrived,0
+St. Malo_Jersey_20250621_0600_234,arrived,1
+St. Malo_Jersey_20250621_1200_235,arrived,10
+Poole_Jersey_20250621_1800_236,arrived,0
+Poole_Jersey_20250621_1200_237,arrived,13
+Poole_Jersey_20250621_0600_238,arrived,10
+Portsmouth_Jersey_20250622_0600_239,arrived,10
+Portsmouth_Jersey_20250622_1800_240,arrived,191
+St. Malo_Jersey_20250622_1800_241,arrived,11
+St. Malo_Jersey_20250622_0600_242,arrived,13
+Poole_Jersey_20250622_0600_243,arrived,7
+Poole_Jersey_20250622_1800_244,arrived,1
+Portsmouth_Jersey_20250623_0600_245,arrived,10
+Portsmouth_Jersey_20250623_1800_246,arrived,8
+Portsmouth_Jersey_20250623_1200_247,arrived,13
+St. Malo_Jersey_20250623_1800_248,arrived,13
+Poole_Jersey_20250623_1800_249,arrived,8
+Poole_Jersey_20250623_0600_250,arrived,4
+Poole_Jersey_20250623_1200_251,arrived,2
+Portsmouth_Jersey_20250624_1800_252,arrived,21
+Portsmouth_Jersey_20250624_0600_253,arrived,9
+St. Malo_Jersey_20250624_0600_254,arrived,1
+St. Malo_Jersey_20250624_1200_255,arrived,13
+Poole_Jersey_20250624_1800_256,arrived,12
+Poole_Jersey_20250624_0600_257,arrived,5
+Portsmouth_Jersey_20250625_1200_258,arrived,11
+Portsmouth_Jersey_20250625_0600_259,arrived,2
+Portsmouth_Jersey_20250625_1800_260,arrived,7
+St. Malo_Jersey_20250625_1800_261,arrived,2
+St. Malo_Jersey_20250625_1200_262,arrived,2
+Poole_Jersey_20250625_1200_263,arrived,52
+Portsmouth_Jersey_20250626_1200_264,arrived,21
+Portsmouth_Jersey_20250626_1800_265,arrived,40
+Portsmouth_Jersey_20250626_0600_266,arrived,29
+St. Malo_Jersey_20250626_1800_267,arrived,5
+St. Malo_Jersey_20250626_0600_268,arrived,6
+St. Malo_Jersey_20250626_1200_269,arrived,8
+Poole_Jersey_20250626_0600_270,arrived,9
+Poole_Jersey_20250626_1800_271,arrived,2
+Poole_Jersey_20250626_1200_272,arrived,5
+Portsmouth_Jersey_20250627_0600_273,arrived,5
+Portsmouth_Jersey_20250627_1800_274,arrived,13
+Portsmouth_Jersey_20250627_1200_275,arrived,4
+St. Malo_Jersey_20250627_1800_276,arrived,57
+St. Malo_Jersey_20250627_1200_277,arrived,3
+Poole_Jersey_20250627_1800_278,arrived,5
+Poole_Jersey_20250627_0600_279,arrived,84
+Portsmouth_Jersey_20250628_1200_280,arrived,13
+Portsmouth_Jersey_20250628_0600_281,arrived,2
+St. Malo_Jersey_20250628_1200_282,arrived,0
+St. Malo_Jersey_20250628_1800_283,arrived,6
+Poole_Jersey_20250628_1200_284,arrived,2
+Poole_Jersey_20250628_1800_285,arrived,14
+Poole_Jersey_20250628_0600_286,arrived,14
+Portsmouth_Jersey_20250629_0600_287,arrived,28
+Portsmouth_Jersey_20250629_1200_288,arrived,0
+Portsmouth_Jersey_20250629_1800_289,arrived,11
+St. Malo_Jersey_20250629_1200_290,arrived,40
+St. Malo_Jersey_20250629_0600_291,arrived,4
+Poole_Jersey_20250629_1200_292,arrived,42
+Poole_Jersey_20250629_1800_293,arrived,11
+Portsmouth_Jersey_20250630_1800_294,arrived,12
+Portsmouth_Jersey_20250630_1200_295,arrived,78
+Portsmouth_Jersey_20250630_0600_296,arrived,2
+St. Malo_Jersey_20250630_0600_297,arrived,61
+St. Malo_Jersey_20250630_1800_298,arrived,6
+Poole_Jersey_20250630_1800_299,arrived,10
+Poole_Jersey_20250630_0600_300,arrived,6
+Portsmouth_Jersey_20250701_1800_301,arrived,41
+Portsmouth_Jersey_20250701_1200_302,arrived,0
+St. Malo_Jersey_20250701_1200_303,arrived,1
+Poole_Jersey_20250701_1200_304,arrived,1
+Poole_Jersey_20250701_1800_305,arrived,66
+Poole_Jersey_20250701_0600_306,arrived,10
+Portsmouth_Jersey_20250702_1800_307,arrived,1
+Portsmouth_Jersey_20250702_1200_308,arrived,10
+Portsmouth_Jersey_20250702_0600_309,arrived,76
+St. Malo_Jersey_20250702_0600_310,arrived,13
+St. Malo_Jersey_20250702_1800_311,arrived,1
+St. Malo_Jersey_20250702_1200_312,cancelled,0
+Poole_Jersey_20250702_1800_313,arrived,4
+Poole_Jersey_20250702_0600_314,arrived,11
+Poole_Jersey_20250702_1200_315,arrived,11
+Portsmouth_Jersey_20250703_1200_316,arrived,10
+Portsmouth_Jersey_20250703_0600_317,arrived,0
+St. Malo_Jersey_20250703_0600_318,arrived,48
+St. Malo_Jersey_20250703_1800_319,arrived,5
+Poole_Jersey_20250703_1200_320,arrived,12
+Poole_Jersey_20250703_1800_321,arrived,1
+Portsmouth_Jersey_20250704_0600_322,arrived,3
+Portsmouth_Jersey_20250704_1200_323,arrived,8
+Portsmouth_Jersey_20250704_1800_324,arrived,8
+St. Malo_Jersey_20250704_1800_325,arrived,6
+St. Malo_Jersey_20250704_0600_326,arrived,2
+St. Malo_Jersey_20250704_1200_327,arrived,7
+Poole_Jersey_20250704_1800_328,arrived,48
+Poole_Jersey_20250704_1200_329,arrived,87
+Poole_Jersey_20250704_0600_330,arrived,2
+Portsmouth_Jersey_20250705_0600_331,arrived,45
+St. Malo_Jersey_20250705_1800_332,arrived,7
+St. Malo_Jersey_20250705_0600_333,arrived,9
+St. Malo_Jersey_20250705_1200_334,arrived,7
+Poole_Jersey_20250705_1800_335,arrived,0
+Poole_Jersey_20250705_1200_336,arrived,6
+Portsmouth_Jersey_20250706_1800_337,arrived,7
+Portsmouth_Jersey_20250706_1200_338,arrived,1
+St. Malo_Jersey_20250706_0600_339,arrived,5
+St. Malo_Jersey_20250706_1800_340,arrived,5
+Poole_Jersey_20250706_0600_341,arrived,8
+Poole_Jersey_20250706_1200_342,arrived,84
+Portsmouth_Jersey_20250707_1800_343,arrived,10
+Portsmouth_Jersey_20250707_1200_344,arrived,2
+St. Malo_Jersey_20250707_0600_345,arrived,7
+St. Malo_Jersey_20250707_1200_346,arrived,61
+Poole_Jersey_20250707_1800_347,arrived,6
+Poole_Jersey_20250707_0600_348,arrived,4
+Poole_Jersey_20250707_1200_349,arrived,9
+Portsmouth_Jersey_20250708_1200_350,arrived,14
+Portsmouth_Jersey_20250708_0600_351,arrived,3
+Portsmouth_Jersey_20250708_1800_352,arrived,0
+St. Malo_Jersey_20250708_1200_353,arrived,5
+St. Malo_Jersey_20250708_0600_354,arrived,11
+Poole_Jersey_20250708_1800_355,arrived,13
+Poole_Jersey_20250708_0600_356,arrived,55
+Poole_Jersey_20250708_1200_357,arrived,55
+Portsmouth_Jersey_20250709_1800_358,arrived,1
+Portsmouth_Jersey_20250709_1200_359,arrived,3
+Portsmouth_Jersey_20250709_0600_360,arrived,0
+St. Malo_Jersey_20250709_1200_361,arrived,6
+St. Malo_Jersey_20250709_0600_362,arrived,7
+St. Malo_Jersey_20250709_1800_363,arrived,9
+Poole_Jersey_20250709_1800_364,arrived,8
+Poole_Jersey_20250709_1200_365,arrived,4
+Poole_Jersey_20250709_0600_366,arrived,12
+Portsmouth_Jersey_20250710_0600_367,arrived,8
+Portsmouth_Jersey_20250710_1200_368,arrived,12
+Portsmouth_Jersey_20250710_1800_369,arrived,44
+St. Malo_Jersey_20250710_1800_370,arrived,12
+St. Malo_Jersey_20250710_0600_371,arrived,12
+Poole_Jersey_20250710_0600_372,arrived,67
+Portsmouth_Jersey_20250711_1200_373,arrived,2
+Portsmouth_Jersey_20250711_1800_374,arrived,9
+Portsmouth_Jersey_20250711_0600_375,arrived,8
+St. Malo_Jersey_20250711_1200_376,arrived,1
+St. Malo_Jersey_20250711_1800_377,arrived,7
+St. Malo_Jersey_20250711_0600_378,arrived,6
+Poole_Jersey_20250711_1800_379,arrived,9
+Portsmouth_Jersey_20250712_1200_380,arrived,78
+Portsmouth_Jersey_20250712_1800_381,arrived,51
+Portsmouth_Jersey_20250712_0600_382,arrived,83
+St. Malo_Jersey_20250712_0600_383,arrived,13
+St. Malo_Jersey_20250712_1200_384,arrived,11
+St. Malo_Jersey_20250712_1800_385,arrived,80
+Poole_Jersey_20250712_1800_386,arrived,17
+Poole_Jersey_20250712_1200_387,arrived,13
+Portsmouth_Jersey_20250713_1800_388,arrived,11
+Portsmouth_Jersey_20250713_1200_389,arrived,0
+Portsmouth_Jersey_20250713_0600_390,arrived,13
+St. Malo_Jersey_20250713_1200_391,arrived,8
+St. Malo_Jersey_20250713_1800_392,arrived,7
+Poole_Jersey_20250713_1200_393,arrived,3
+Poole_Jersey_20250713_0600_394,arrived,10
+Portsmouth_Jersey_20250714_1200_395,arrived,14
+Portsmouth_Jersey_20250714_1800_396,arrived,11
+Portsmouth_Jersey_20250714_0600_397,arrived,60
+St. Malo_Jersey_20250714_1800_398,arrived,1
+St. Malo_Jersey_20250714_1200_399,arrived,6
+St. Malo_Jersey_20250714_0600_400,arrived,84
+Poole_Jersey_20250714_0600_401,arrived,11
+Poole_Jersey_20250714_1200_402,arrived,7
+Portsmouth_Jersey_20250715_1200_403,arrived,6
+Portsmouth_Jersey_20250715_0600_404,arrived,85
+Portsmouth_Jersey_20250715_1800_405,arrived,0
+St. Malo_Jersey_20250715_1200_406,arrived,2
+St. Malo_Jersey_20250715_1800_407,arrived,13
+St. Malo_Jersey_20250715_0600_408,arrived,2
+Poole_Jersey_20250715_1800_409,arrived,3
+Poole_Jersey_20250715_1200_410,arrived,10
+Portsmouth_Jersey_20250716_0600_411,arrived,6
+St. Malo_Jersey_20250716_0600_412,arrived,2
+Poole_Jersey_20250716_1800_413,arrived,14
+Poole_Jersey_20250716_1200_414,arrived,16
+Poole_Jersey_20250716_0600_415,arrived,37
+Portsmouth_Jersey_20250717_1200_416,arrived,3
+Portsmouth_Jersey_20250717_0600_417,arrived,7
+St. Malo_Jersey_20250717_1800_418,arrived,1
+St. Malo_Jersey_20250717_1200_419,arrived,4
+Poole_Jersey_20250717_1200_420,arrived,8
+Poole_Jersey_20250717_1800_421,arrived,8
+Poole_Jersey_20250717_0600_422,arrived,4
+Portsmouth_Jersey_20250718_1200_423,arrived,26
+St. Malo_Jersey_20250718_0600_424,arrived,18
+St. Malo_Jersey_20250718_1800_425,arrived,7
+Poole_Jersey_20250718_0600_426,arrived,10
+Poole_Jersey_20250718_1800_427,arrived,14
+Portsmouth_Jersey_20250719_1200_428,arrived,14
+Portsmouth_Jersey_20250719_0600_429,arrived,3
+St. Malo_Jersey_20250719_1200_430,arrived,9
+St. Malo_Jersey_20250719_1800_431,arrived,1
+St. Malo_Jersey_20250719_0600_432,arrived,13
+Poole_Jersey_20250719_1200_433,arrived,9
+Poole_Jersey_20250719_1800_434,arrived,10
+Poole_Jersey_20250719_0600_435,arrived,12
+Portsmouth_Jersey_20250720_1200_436,arrived,2
+Portsmouth_Jersey_20250720_1800_437,arrived,1
+Portsmouth_Jersey_20250720_0600_438,arrived,36
+St. Malo_Jersey_20250720_1200_439,arrived,65
+St. Malo_Jersey_20250720_1800_440,arrived,14
+St. Malo_Jersey_20250720_0600_441,arrived,78
+Poole_Jersey_20250720_1200_442,arrived,80
+Poole_Jersey_20250720_1800_443,arrived,3
+Poole_Jersey_20250720_0600_444,arrived,7
+Portsmouth_Jersey_20250721_1200_445,arrived,0
+Portsmouth_Jersey_20250721_0600_446,arrived,11
+St. Malo_Jersey_20250721_0600_447,arrived,8
+St. Malo_Jersey_20250721_1800_448,arrived,46
+Poole_Jersey_20250721_0600_449,arrived,11
+Portsmouth_Jersey_20250722_1200_450,arrived,14
+Portsmouth_Jersey_20250722_1800_451,arrived,12
+St. Malo_Jersey_20250722_1200_452,arrived,10
+St. Malo_Jersey_20250722_0600_453,arrived,6
+St. Malo_Jersey_20250722_1800_454,arrived,1
+Poole_Jersey_20250722_1200_455,arrived,9
+Poole_Jersey_20250722_1800_456,arrived,13
+Portsmouth_Jersey_20250723_0600_457,arrived,43
+Portsmouth_Jersey_20250723_1200_458,arrived,9
+St. Malo_Jersey_20250723_0600_459,arrived,14
+St. Malo_Jersey_20250723_1200_460,arrived,9
+St. Malo_Jersey_20250723_1800_461,arrived,0
+Poole_Jersey_20250723_1800_462,arrived,19
+Poole_Jersey_20250723_0600_463,arrived,47
+Portsmouth_Jersey_20250724_1200_464,arrived,52
+St. Malo_Jersey_20250724_1200_465,arrived,70
+St. Malo_Jersey_20250724_0600_466,arrived,9
+Poole_Jersey_20250724_0600_467,arrived,6
+Poole_Jersey_20250724_1800_468,arrived,9
+Portsmouth_Jersey_20250725_1800_469,arrived,13
+Portsmouth_Jersey_20250725_0600_470,arrived,83
+Portsmouth_Jersey_20250725_1200_471,arrived,3
+St. Malo_Jersey_20250725_1200_472,arrived,2
+St. Malo_Jersey_20250725_1800_473,arrived,47
+St. Malo_Jersey_20250725_0600_474,arrived,9
+Poole_Jersey_20250725_1200_475,arrived,38
+Poole_Jersey_20250725_1800_476,arrived,31
+Portsmouth_Jersey_20250726_1200_477,arrived,9
+Portsmouth_Jersey_20250726_0600_478,arrived,8
+St. Malo_Jersey_20250726_1800_479,arrived,6
+St. Malo_Jersey_20250726_1200_480,arrived,10
+Poole_Jersey_20250726_1800_481,arrived,6
+Poole_Jersey_20250726_1200_482,arrived,12
+Portsmouth_Jersey_20250727_1800_483,arrived,13
+Portsmouth_Jersey_20250727_1200_484,arrived,57
+St. Malo_Jersey_20250727_0600_485,arrived,7
+St. Malo_Jersey_20250727_1800_486,arrived,84
+Poole_Jersey_20250727_1800_487,arrived,27
+Poole_Jersey_20250727_0600_488,arrived,0
+Portsmouth_Jersey_20250728_1800_489,arrived,20
+Portsmouth_Jersey_20250728_1200_490,arrived,6
+St. Malo_Jersey_20250728_1800_491,arrived,82
+St. Malo_Jersey_20250728_0600_492,arrived,9
+Poole_Jersey_20250728_1200_493,arrived,7
+Poole_Jersey_20250728_0600_494,arrived,9
+Poole_Jersey_20250728_1800_495,arrived,75
+Portsmouth_Jersey_20250729_1800_496,arrived,7
+Portsmouth_Jersey_20250729_1200_497,arrived,1
+St. Malo_Jersey_20250729_1800_498,arrived,14
+St. Malo_Jersey_20250729_0600_499,arrived,7
+Poole_Jersey_20250729_1200_500,arrived,4
+Portsmouth_Jersey_20250730_1800_501,arrived,8
+Portsmouth_Jersey_20250730_0600_502,arrived,9
+St. Malo_Jersey_20250730_1800_503,arrived,294
+Poole_Jersey_20250730_1200_504,arrived,8
+Poole_Jersey_20250730_1800_505,arrived,14
+Portsmouth_Jersey_20250731_1200_506,arrived,18
+Portsmouth_Jersey_20250731_0600_507,arrived,9
+St. Malo_Jersey_20250731_1200_508,arrived,2
+St. Malo_Jersey_20250731_0600_509,arrived,6
+Poole_Jersey_20250731_1200_510,arrived,10
+Portsmouth_Jersey_20250801_1800_511,arrived,6
+Portsmouth_Jersey_20250801_1200_512,arrived,6
+St. Malo_Jersey_20250801_0600_513,arrived,6
+St. Malo_Jersey_20250801_1800_514,arrived,66
+St. Malo_Jersey_20250801_1200_515,arrived,21
+Poole_Jersey_20250801_0600_516,arrived,79
+Poole_Jersey_20250801_1800_517,arrived,9
+Poole_Jersey_20250801_1200_518,arrived,48
+Portsmouth_Jersey_20250802_1800_519,arrived,6
+Portsmouth_Jersey_20250802_0600_520,arrived,5
+St. Malo_Jersey_20250802_1200_521,arrived,51
+Poole_Jersey_20250802_0600_522,arrived,1
+Poole_Jersey_20250802_1800_523,arrived,4
+Poole_Jersey_20250802_1200_524,arrived,3
+Portsmouth_Jersey_20250803_1200_525,arrived,0
+Portsmouth_Jersey_20250803_1800_526,arrived,9
+St. Malo_Jersey_20250803_1800_527,arrived,8
+St. Malo_Jersey_20250803_1200_528,arrived,10
+Poole_Jersey_20250803_1800_529,arrived,5
+Poole_Jersey_20250803_0600_530,arrived,7
+Portsmouth_Jersey_20250804_1200_531,arrived,68
+Portsmouth_Jersey_20250804_1800_532,arrived,36
+St. Malo_Jersey_20250804_0600_533,arrived,7
+St. Malo_Jersey_20250804_1200_534,arrived,6
+Poole_Jersey_20250804_1200_535,arrived,10
+Poole_Jersey_20250804_1800_536,arrived,14
+Poole_Jersey_20250804_0600_537,arrived,2
+Portsmouth_Jersey_20250805_1200_538,arrived,0
+Portsmouth_Jersey_20250805_0600_539,arrived,12
+Portsmouth_Jersey_20250805_1800_540,arrived,8
+St. Malo_Jersey_20250805_1200_541,arrived,22
+St. Malo_Jersey_20250805_1800_542,arrived,13
+St. Malo_Jersey_20250805_0600_543,arrived,8
+Poole_Jersey_20250805_0600_544,arrived,11
+Poole_Jersey_20250805_1800_545,arrived,0
+Portsmouth_Jersey_20250806_1200_546,arrived,8
+Portsmouth_Jersey_20250806_1800_547,arrived,5
+Portsmouth_Jersey_20250806_0600_548,arrived,5
+St. Malo_Jersey_20250806_1800_549,arrived,6
+St. Malo_Jersey_20250806_0600_550,arrived,79
+St. Malo_Jersey_20250806_1200_551,arrived,9
+Poole_Jersey_20250806_1200_552,arrived,6
+Poole_Jersey_20250806_0600_553,arrived,9
+Poole_Jersey_20250806_1800_554,arrived,13
+Portsmouth_Jersey_20250807_0600_555,arrived,3
+Portsmouth_Jersey_20250807_1200_556,arrived,5
+Portsmouth_Jersey_20250807_1800_557,arrived,9
+St. Malo_Jersey_20250807_1800_558,arrived,14
+St. Malo_Jersey_20250807_0600_559,arrived,13
+Poole_Jersey_20250807_1800_560,arrived,14
+Poole_Jersey_20250807_1200_561,arrived,5
+Portsmouth_Jersey_20250808_1800_562,arrived,6
+Portsmouth_Jersey_20250808_0600_563,arrived,14
+Portsmouth_Jersey_20250808_1200_564,arrived,10
+St. Malo_Jersey_20250808_0600_565,arrived,3
+St. Malo_Jersey_20250808_1800_566,arrived,14
+Poole_Jersey_20250808_1200_567,cancelled,0
+Poole_Jersey_20250808_0600_568,arrived,9
+Poole_Jersey_20250808_1800_569,arrived,14
+Portsmouth_Jersey_20250809_0600_570,arrived,60
+St. Malo_Jersey_20250809_1800_571,arrived,13
+Poole_Jersey_20250809_0600_572,arrived,10
+Poole_Jersey_20250809_1800_573,arrived,63
+Poole_Jersey_20250809_1200_574,arrived,3
+Portsmouth_Jersey_20250810_1800_575,arrived,8
+Portsmouth_Jersey_20250810_1200_576,arrived,13
+St. Malo_Jersey_20250810_0600_577,arrived,0
+St. Malo_Jersey_20250810_1200_578,arrived,6
+Poole_Jersey_20250810_0600_579,arrived,21
+Poole_Jersey_20250810_1200_580,arrived,7
+Portsmouth_Jersey_20250811_0600_581,arrived,8
+Portsmouth_Jersey_20250811_1800_582,arrived,17
+Portsmouth_Jersey_20250811_1200_583,arrived,6
+St. Malo_Jersey_20250811_1200_584,arrived,28
+St. Malo_Jersey_20250811_0600_585,arrived,9
+Poole_Jersey_20250811_1800_586,arrived,5
+Poole_Jersey_20250811_0600_587,arrived,7
+Poole_Jersey_20250811_1200_588,arrived,20
+Portsmouth_Jersey_20250812_1800_589,arrived,13
+Portsmouth_Jersey_20250812_1200_590,arrived,1
+St. Malo_Jersey_20250812_1800_591,arrived,35
+St. Malo_Jersey_20250812_0600_592,arrived,12
+Poole_Jersey_20250812_1200_593,arrived,10
+Poole_Jersey_20250812_1800_594,arrived,12
+Poole_Jersey_20250812_0600_595,arrived,14
+Portsmouth_Jersey_20250813_0600_596,arrived,4
+Portsmouth_Jersey_20250813_1800_597,arrived,0
+Portsmouth_Jersey_20250813_1200_598,arrived,12
+St. Malo_Jersey_20250813_1200_599,arrived,7
+St. Malo_Jersey_20250813_1800_600,arrived,8
+St. Malo_Jersey_20250813_0600_601,arrived,2
+Poole_Jersey_20250813_1200_602,arrived,14
+Poole_Jersey_20250813_1800_603,arrived,4
+Portsmouth_Jersey_20250814_0600_604,arrived,8
+Portsmouth_Jersey_20250814_1800_605,arrived,83
+Portsmouth_Jersey_20250814_1200_606,arrived,89
+St. Malo_Jersey_20250814_1200_607,arrived,2
+St. Malo_Jersey_20250814_1800_608,arrived,86
+Poole_Jersey_20250814_1800_609,arrived,2
+Poole_Jersey_20250814_0600_610,arrived,23
+Poole_Jersey_20250814_1200_611,arrived,55
+Portsmouth_Jersey_20250815_1200_612,arrived,43
+Portsmouth_Jersey_20250815_1800_613,arrived,166
+Portsmouth_Jersey_20250815_0600_614,arrived,11
+St. Malo_Jersey_20250815_1200_615,arrived,54
+St. Malo_Jersey_20250815_1800_616,arrived,0
+Poole_Jersey_20250815_0600_617,arrived,54
+Poole_Jersey_20250815_1200_618,arrived,87
+Poole_Jersey_20250815_1800_619,arrived,0
+Portsmouth_Jersey_20250816_1800_620,arrived,1
+Portsmouth_Jersey_20250816_0600_621,arrived,6
+Portsmouth_Jersey_20250816_1200_622,arrived,7
+St. Malo_Jersey_20250816_1800_623,arrived,1
+St. Malo_Jersey_20250816_1200_624,arrived,139
+Poole_Jersey_20250816_1800_625,arrived,14
+Poole_Jersey_20250816_0600_626,arrived,62
+Portsmouth_Jersey_20250817_1800_627,arrived,1
+Portsmouth_Jersey_20250817_1200_628,arrived,9
+Portsmouth_Jersey_20250817_0600_629,arrived,9
+St. Malo_Jersey_20250817_1200_630,arrived,10
+St. Malo_Jersey_20250817_1800_631,arrived,3
+St. Malo_Jersey_20250817_0600_632,arrived,10
+Poole_Jersey_20250817_1200_633,arrived,1
+Poole_Jersey_20250817_0600_634,arrived,7
+Portsmouth_Jersey_20250818_1200_635,arrived,6
+Portsmouth_Jersey_20250818_1800_636,arrived,10
+St. Malo_Jersey_20250818_1200_637,arrived,78
+St. Malo_Jersey_20250818_0600_638,arrived,8
+Poole_Jersey_20250818_1800_639,arrived,50
+Poole_Jersey_20250818_0600_640,arrived,13
+Poole_Jersey_20250818_1200_641,arrived,12
+Portsmouth_Jersey_20250819_1800_642,arrived,3
+Portsmouth_Jersey_20250819_0600_643,arrived,6
+St. Malo_Jersey_20250819_1200_644,arrived,30
+St. Malo_Jersey_20250819_0600_645,arrived,7
+Poole_Jersey_20250819_1200_646,arrived,15
+Poole_Jersey_20250819_0600_647,arrived,81
+Portsmouth_Jersey_20250820_1200_648,arrived,8
+Portsmouth_Jersey_20250820_1800_649,arrived,70
+St. Malo_Jersey_20250820_1800_650,arrived,5
+St. Malo_Jersey_20250820_1200_651,arrived,12
+Poole_Jersey_20250820_0600_652,arrived,67
+Poole_Jersey_20250820_1200_653,arrived,6
+Portsmouth_Jersey_20250821_1800_654,arrived,7
+Portsmouth_Jersey_20250821_1200_655,arrived,7
+Portsmouth_Jersey_20250821_0600_656,arrived,30
+St. Malo_Jersey_20250821_1200_657,arrived,65
+St. Malo_Jersey_20250821_1800_658,arrived,47
+Poole_Jersey_20250821_0600_659,arrived,13
+Poole_Jersey_20250821_1200_660,arrived,10
+Poole_Jersey_20250821_1800_661,arrived,10
+Portsmouth_Jersey_20250822_0600_662,arrived,14
+Portsmouth_Jersey_20250822_1800_663,arrived,29
+St. Malo_Jersey_20250822_1200_664,arrived,13
+St. Malo_Jersey_20250822_0600_665,arrived,24
+St. Malo_Jersey_20250822_1800_666,arrived,11
+Poole_Jersey_20250822_1200_667,arrived,34
+Poole_Jersey_20250822_1800_668,arrived,8
+Poole_Jersey_20250822_0600_669,arrived,85
+Portsmouth_Jersey_20250823_1800_670,arrived,0
+Portsmouth_Jersey_20250823_0600_671,arrived,31
+St. Malo_Jersey_20250823_0600_672,arrived,11
+St. Malo_Jersey_20250823_1800_673,arrived,14
+St. Malo_Jersey_20250823_1200_674,arrived,199
+Poole_Jersey_20250823_1200_675,arrived,0
+Portsmouth_Jersey_20250824_1200_676,arrived,11
+Portsmouth_Jersey_20250824_0600_677,arrived,34
+Portsmouth_Jersey_20250824_1800_678,arrived,4
+St. Malo_Jersey_20250824_0600_679,arrived,2
+St. Malo_Jersey_20250824_1800_680,arrived,54
+Poole_Jersey_20250824_1200_681,arrived,13
+Poole_Jersey_20250824_0600_682,arrived,15
+Portsmouth_Jersey_20250825_0600_683,arrived,12
+Portsmouth_Jersey_20250825_1800_684,arrived,12
+St. Malo_Jersey_20250825_0600_685,arrived,14
+St. Malo_Jersey_20250825_1200_686,arrived,13
+Poole_Jersey_20250825_1200_687,arrived,8
+Poole_Jersey_20250825_1800_688,arrived,9
+Poole_Jersey_20250825_0600_689,arrived,3
+Portsmouth_Jersey_20250826_1200_690,arrived,59
+Portsmouth_Jersey_20250826_1800_691,arrived,9
+Portsmouth_Jersey_20250826_0600_692,arrived,10
+St. Malo_Jersey_20250826_1800_693,arrived,77
+St. Malo_Jersey_20250826_1200_694,arrived,6
+St. Malo_Jersey_20250826_0600_695,arrived,22
+Poole_Jersey_20250826_0600_696,arrived,8
+Poole_Jersey_20250826_1200_697,arrived,11
+Portsmouth_Jersey_20250827_0600_698,arrived,10
+Portsmouth_Jersey_20250827_1200_699,arrived,4
+Portsmouth_Jersey_20250827_1800_700,arrived,14
+St. Malo_Jersey_20250827_0600_701,arrived,2
+Poole_Jersey_20250827_1800_702,arrived,9
+Poole_Jersey_20250827_0600_703,arrived,73
+Portsmouth_Jersey_20250828_1800_704,arrived,4
+Portsmouth_Jersey_20250828_1200_705,arrived,13
+Portsmouth_Jersey_20250828_0600_706,arrived,13
+St. Malo_Jersey_20250828_1800_707,arrived,3
+St. Malo_Jersey_20250828_1200_708,arrived,0
+St. Malo_Jersey_20250828_0600_709,arrived,14
+Poole_Jersey_20250828_1200_710,arrived,20
+Poole_Jersey_20250828_1800_711,arrived,210
+Poole_Jersey_20250828_0600_712,arrived,14
+Portsmouth_Jersey_20250829_0600_713,arrived,9
+Portsmouth_Jersey_20250829_1800_714,arrived,13
+St. Malo_Jersey_20250829_1200_715,arrived,9
+St. Malo_Jersey_20250829_0600_716,arrived,2
+St. Malo_Jersey_20250829_1800_717,arrived,2
+Poole_Jersey_20250829_1200_718,arrived,0
+Poole_Jersey_20250829_1800_719,arrived,12
+Portsmouth_Jersey_20250830_1200_720,arrived,11
+Portsmouth_Jersey_20250830_0600_721,arrived,11
+St. Malo_Jersey_20250830_1800_722,arrived,2
+St. Malo_Jersey_20250830_0600_723,arrived,34
+St. Malo_Jersey_20250830_1200_724,arrived,4
+Poole_Jersey_20250830_0600_725,arrived,10
+Poole_Jersey_20250830_1200_726,arrived,11
+Portsmouth_Jersey_20250831_1800_727,arrived,14
+Portsmouth_Jersey_20250831_0600_728,arrived,11
+Portsmouth_Jersey_20250831_1200_729,arrived,87
+St. Malo_Jersey_20250831_1200_730,arrived,3
+St. Malo_Jersey_20250831_1800_731,arrived,5
+Poole_Jersey_20250831_0600_732,arrived,80
+Portsmouth_Jersey_20250901_1800_733,arrived,3
+Portsmouth_Jersey_20250901_0600_734,arrived,10
+Portsmouth_Jersey_20250901_1200_735,arrived,8
+St. Malo_Jersey_20250901_0600_736,arrived,1
+St. Malo_Jersey_20250901_1800_737,arrived,5
+Poole_Jersey_20250901_1800_738,arrived,13
+Poole_Jersey_20250901_0600_739,arrived,8
+Poole_Jersey_20250901_1200_740,arrived,12
+Portsmouth_Jersey_20250902_0600_741,arrived,10
+Portsmouth_Jersey_20250902_1800_742,arrived,2
+St. Malo_Jersey_20250902_1800_743,arrived,222
+St. Malo_Jersey_20250902_0600_744,arrived,64
+St. Malo_Jersey_20250902_1200_745,arrived,9
+Poole_Jersey_20250902_0600_746,cancelled,0
+Poole_Jersey_20250902_1800_747,arrived,1
+Poole_Jersey_20250902_1200_748,arrived,69
+Portsmouth_Jersey_20250903_1800_749,arrived,64
+Portsmouth_Jersey_20250903_1200_750,arrived,4
+Portsmouth_Jersey_20250903_0600_751,arrived,2
+St. Malo_Jersey_20250903_0600_752,arrived,9
+St. Malo_Jersey_20250903_1800_753,arrived,12
+Poole_Jersey_20250903_1200_754,arrived,55
+Poole_Jersey_20250903_1800_755,arrived,3
+Portsmouth_Jersey_20250904_1200_756,arrived,12
+Portsmouth_Jersey_20250904_0600_757,arrived,7
+Portsmouth_Jersey_20250904_1800_758,arrived,14
+St. Malo_Jersey_20250904_1200_759,arrived,2
+St. Malo_Jersey_20250904_1800_760,arrived,11
+Poole_Jersey_20250904_0600_761,arrived,8
+Poole_Jersey_20250904_1800_762,arrived,11
+Portsmouth_Jersey_20250905_1800_763,arrived,13
+Portsmouth_Jersey_20250905_0600_764,arrived,226
+St. Malo_Jersey_20250905_0600_765,arrived,7
+St. Malo_Jersey_20250905_1200_766,arrived,11
+Poole_Jersey_20250905_0600_767,arrived,5
+Poole_Jersey_20250905_1800_768,arrived,10
+Portsmouth_Jersey_20250906_1200_769,arrived,255
+Portsmouth_Jersey_20250906_0600_770,arrived,13
+St. Malo_Jersey_20250906_0600_771,arrived,53
+St. Malo_Jersey_20250906_1200_772,arrived,3
+St. Malo_Jersey_20250906_1800_773,arrived,7
+Poole_Jersey_20250906_0600_774,arrived,4
+Poole_Jersey_20250906_1800_775,arrived,30
+Poole_Jersey_20250906_1200_776,arrived,1
+Portsmouth_Jersey_20250907_1800_777,arrived,8
+Portsmouth_Jersey_20250907_0600_778,arrived,6
+Portsmouth_Jersey_20250907_1200_779,arrived,5
+St. Malo_Jersey_20250907_1200_780,arrived,2
+St. Malo_Jersey_20250907_0600_781,arrived,8
+Poole_Jersey_20250907_1800_782,arrived,7
+Poole_Jersey_20250907_1200_783,arrived,1
+Portsmouth_Jersey_20250908_1800_784,arrived,82
+Portsmouth_Jersey_20250908_0600_785,arrived,73
+Portsmouth_Jersey_20250908_1200_786,arrived,5
+St. Malo_Jersey_20250908_1200_787,arrived,5
+St. Malo_Jersey_20250908_0600_788,arrived,13
+Poole_Jersey_20250908_1800_789,arrived,5
+Poole_Jersey_20250908_0600_790,arrived,2
+Portsmouth_Jersey_20250909_1200_791,arrived,4
+Portsmouth_Jersey_20250909_0600_792,arrived,5
+St. Malo_Jersey_20250909_0600_793,arrived,0
+St. Malo_Jersey_20250909_1800_794,arrived,9
+Poole_Jersey_20250909_1200_795,arrived,4
+Poole_Jersey_20250909_0600_796,arrived,9
+Portsmouth_Jersey_20250910_0600_797,arrived,17
+Portsmouth_Jersey_20250910_1800_798,arrived,4
+Portsmouth_Jersey_20250910_1200_799,arrived,1
+St. Malo_Jersey_20250910_0600_800,arrived,76
+St. Malo_Jersey_20250910_1200_801,arrived,71
+Poole_Jersey_20250910_0600_802,arrived,10
+Poole_Jersey_20250910_1800_803,arrived,9
+Portsmouth_Jersey_20250911_0600_804,arrived,12
+Portsmouth_Jersey_20250911_1800_805,arrived,4
+St. Malo_Jersey_20250911_1800_806,cancelled,0
+St. Malo_Jersey_20250911_1200_807,arrived,6
+St. Malo_Jersey_20250911_0600_808,arrived,3
+Poole_Jersey_20250911_1800_809,arrived,7
+Poole_Jersey_20250911_1200_810,arrived,44
+Portsmouth_Jersey_20250912_1200_811,arrived,7
+Portsmouth_Jersey_20250912_1800_812,arrived,63
+St. Malo_Jersey_20250912_1800_813,arrived,8
+St. Malo_Jersey_20250912_0600_814,arrived,5
+St. Malo_Jersey_20250912_1200_815,arrived,7
+Poole_Jersey_20250912_1800_816,arrived,13
+Poole_Jersey_20250912_1200_817,arrived,0
+Portsmouth_Jersey_20250913_1200_818,arrived,6
+Portsmouth_Jersey_20250913_0600_819,arrived,15
+Portsmouth_Jersey_20250913_1800_820,arrived,0
+St. Malo_Jersey_20250913_1200_821,arrived,3
+St. Malo_Jersey_20250913_1800_822,arrived,7
+Poole_Jersey_20250913_1800_823,arrived,11
+Portsmouth_Jersey_20250914_1200_824,arrived,4
+Portsmouth_Jersey_20250914_0600_825,arrived,8
+St. Malo_Jersey_20250914_1200_826,arrived,10
+St. Malo_Jersey_20250914_1800_827,arrived,8
+Poole_Jersey_20250914_1200_828,arrived,5
+Poole_Jersey_20250914_1800_829,arrived,82
+Portsmouth_Jersey_20250915_1200_830,arrived,4
+Portsmouth_Jersey_20250915_1800_831,arrived,9
+Portsmouth_Jersey_20250915_0600_832,arrived,8
+St. Malo_Jersey_20250915_1200_833,arrived,5
+Poole_Jersey_20250915_1800_834,arrived,12
+Poole_Jersey_20250915_0600_835,arrived,0
+Portsmouth_Jersey_20250916_1800_836,arrived,13
+Portsmouth_Jersey_20250916_0600_837,arrived,0
+Portsmouth_Jersey_20250916_1200_838,arrived,1
+St. Malo_Jersey_20250916_1800_839,arrived,5
+St. Malo_Jersey_20250916_1200_840,arrived,61
+St. Malo_Jersey_20250916_0600_841,arrived,33
+Poole_Jersey_20250916_0600_842,arrived,254
+Poole_Jersey_20250916_1200_843,arrived,2
+Poole_Jersey_20250916_1800_844,cancelled,0
+Portsmouth_Jersey_20250917_1200_845,arrived,3
+Portsmouth_Jersey_20250917_1800_846,arrived,13
+St. Malo_Jersey_20250917_0600_847,arrived,6
+St. Malo_Jersey_20250917_1200_848,arrived,3
+Poole_Jersey_20250917_0600_849,arrived,9
+Poole_Jersey_20250917_1800_850,arrived,9
+Poole_Jersey_20250917_1200_851,arrived,22
+Portsmouth_Jersey_20250918_1200_852,arrived,14
+Portsmouth_Jersey_20250918_1800_853,arrived,12
+St. Malo_Jersey_20250918_1200_854,arrived,31
+St. Malo_Jersey_20250918_0600_855,arrived,2
+Poole_Jersey_20250918_0600_856,arrived,14
+Poole_Jersey_20250918_1200_857,arrived,10
+Portsmouth_Jersey_20250919_0600_858,cancelled,0
+Portsmouth_Jersey_20250919_1200_859,arrived,1
+St. Malo_Jersey_20250919_0600_860,arrived,4
+Poole_Jersey_20250919_0600_861,arrived,0
+Poole_Jersey_20250919_1800_862,arrived,48
+Portsmouth_Jersey_20250920_1800_863,arrived,85
+St. Malo_Jersey_20250920_1800_864,arrived,5
+St. Malo_Jersey_20250920_0600_865,arrived,2
+Poole_Jersey_20250920_0600_866,cancelled,0
+Poole_Jersey_20250920_1200_867,arrived,37
+Portsmouth_Jersey_20250921_1200_868,arrived,39
+Portsmouth_Jersey_20250921_1800_869,arrived,31
+St. Malo_Jersey_20250921_0600_870,arrived,1
+Poole_Jersey_20250921_0600_871,arrived,9
+Poole_Jersey_20250921_1800_872,arrived,11
+Poole_Jersey_20250921_1200_873,arrived,0
+Portsmouth_Jersey_20250922_1200_874,arrived,14
+Portsmouth_Jersey_20250922_1800_875,arrived,88
+St. Malo_Jersey_20250922_1800_876,arrived,13
+Poole_Jersey_20250922_1800_877,arrived,13
+Portsmouth_Jersey_20250923_1200_878,arrived,12
+Portsmouth_Jersey_20250923_0600_879,arrived,10
+Portsmouth_Jersey_20250923_1800_880,arrived,7
+St. Malo_Jersey_20250923_1800_881,arrived,7
+St. Malo_Jersey_20250923_1200_882,arrived,9
+Poole_Jersey_20250923_0600_883,arrived,0
+Poole_Jersey_20250923_1800_884,arrived,1
+Portsmouth_Jersey_20250924_1200_885,arrived,0
+St. Malo_Jersey_20250924_1800_886,arrived,10
+St. Malo_Jersey_20250924_0600_887,arrived,21
+St. Malo_Jersey_20250924_1200_888,arrived,9
+Poole_Jersey_20250924_1800_889,arrived,211
+Poole_Jersey_20250924_1200_890,arrived,10
+Portsmouth_Jersey_20250925_0600_891,arrived,6
+St. Malo_Jersey_20250925_0600_892,cancelled,0
+St. Malo_Jersey_20250925_1200_893,arrived,8
+Poole_Jersey_20250925_1200_894,arrived,41
+Poole_Jersey_20250925_0600_895,arrived,84
+Poole_Jersey_20250925_1800_896,arrived,4
+Portsmouth_Jersey_20250926_0600_897,arrived,4
+Portsmouth_Jersey_20250926_1200_898,arrived,9
+St. Malo_Jersey_20250926_0600_899,arrived,191
+Poole_Jersey_20250926_0600_900,arrived,14
+Poole_Jersey_20250926_1800_901,arrived,4
+Portsmouth_Jersey_20250927_0600_902,arrived,13
+Portsmouth_Jersey_20250927_1800_903,arrived,56
+St. Malo_Jersey_20250927_0600_904,arrived,34
+Poole_Jersey_20250927_1200_905,arrived,11
+Poole_Jersey_20250927_1800_906,arrived,7
+Portsmouth_Jersey_20250928_0600_907,arrived,11
+Portsmouth_Jersey_20250928_1200_908,arrived,8
+St. Malo_Jersey_20250928_0600_909,arrived,10
+St. Malo_Jersey_20250928_1200_910,arrived,7
+St. Malo_Jersey_20250928_1800_911,arrived,11
+Poole_Jersey_20250928_1800_912,arrived,11
+Poole_Jersey_20250928_1200_913,arrived,8
+Poole_Jersey_20250928_0600_914,arrived,14
+Portsmouth_Jersey_20250929_1200_915,arrived,12
+Portsmouth_Jersey_20250929_0600_916,arrived,3
+Portsmouth_Jersey_20250929_1800_917,arrived,10
+St. Malo_Jersey_20250929_1200_918,arrived,4
+St. Malo_Jersey_20250929_1800_919,arrived,0
+Poole_Jersey_20250929_1800_920,arrived,3
+Poole_Jersey_20250929_1200_921,arrived,11
+Portsmouth_Jersey_20250930_1800_922,arrived,14
+Portsmouth_Jersey_20250930_0600_923,arrived,4
+Portsmouth_Jersey_20250930_1200_924,arrived,4
+St. Malo_Jersey_20250930_0600_925,arrived,8
+St. Malo_Jersey_20250930_1800_926,arrived,80
+St. Malo_Jersey_20250930_1200_927,arrived,9
+Poole_Jersey_20250930_0600_928,arrived,12
+Poole_Jersey_20250930_1800_929,arrived,1
+Poole_Jersey_20250930_1200_930,arrived,8
+Portsmouth_Jersey_20251001_1800_931,arrived,4
+Portsmouth_Jersey_20251001_0600_932,arrived,14
+Portsmouth_Jersey_20251001_1200_933,arrived,6
+St. Malo_Jersey_20251001_1800_934,arrived,4
+St. Malo_Jersey_20251001_0600_935,arrived,1
+St. Malo_Jersey_20251001_1200_936,arrived,9
+Poole_Jersey_20251001_1200_937,arrived,6
+Poole_Jersey_20251001_0600_938,arrived,53
+Portsmouth_Jersey_20251002_1200_939,arrived,7
+Portsmouth_Jersey_20251002_0600_940,arrived,11
+St. Malo_Jersey_20251002_0600_941,arrived,3
+St. Malo_Jersey_20251002_1800_942,arrived,55
+Poole_Jersey_20251002_1200_943,arrived,1
+Poole_Jersey_20251002_0600_944,arrived,3
+Portsmouth_Jersey_20251003_1800_945,arrived,3
+Portsmouth_Jersey_20251003_1200_946,arrived,71
+St. Malo_Jersey_20251003_1800_947,arrived,3
+St. Malo_Jersey_20251003_0600_948,arrived,12
+St. Malo_Jersey_20251003_1200_949,arrived,8
+Poole_Jersey_20251003_1200_950,arrived,4
+Poole_Jersey_20251003_0600_951,arrived,1
+Portsmouth_Jersey_20251004_0600_952,arrived,66
+Portsmouth_Jersey_20251004_1800_953,arrived,1
+St. Malo_Jersey_20251004_1800_954,arrived,7
+Poole_Jersey_20251004_0600_955,arrived,1
+Poole_Jersey_20251004_1200_956,arrived,9
+Portsmouth_Jersey_20251005_1200_957,arrived,3
+Portsmouth_Jersey_20251005_0600_958,cancelled,0
+St. Malo_Jersey_20251005_0600_959,arrived,4
+Poole_Jersey_20251005_1200_960,arrived,2
+Poole_Jersey_20251005_0600_961,arrived,5
+Poole_Jersey_20251005_1800_962,arrived,247
+Portsmouth_Jersey_20251006_1200_963,arrived,1
+Portsmouth_Jersey_20251006_1800_964,arrived,0
+St. Malo_Jersey_20251006_0600_965,arrived,3
+St. Malo_Jersey_20251006_1800_966,arrived,78
+St. Malo_Jersey_20251006_1200_967,arrived,3
+Poole_Jersey_20251006_0600_968,arrived,6
+Poole_Jersey_20251006_1200_969,arrived,89
+Portsmouth_Jersey_20251007_1200_970,arrived,72
+Portsmouth_Jersey_20251007_1800_971,arrived,14
+St. Malo_Jersey_20251007_0600_972,arrived,2
+St. Malo_Jersey_20251007_1200_973,arrived,10
+Poole_Jersey_20251007_1200_974,arrived,36
+Poole_Jersey_20251007_1800_975,arrived,2
+Poole_Jersey_20251007_0600_976,arrived,14
+Portsmouth_Jersey_20251008_1800_977,arrived,55
+St. Malo_Jersey_20251008_1200_978,arrived,1
+St. Malo_Jersey_20251008_0600_979,arrived,5
+St. Malo_Jersey_20251008_1800_980,arrived,31
+Poole_Jersey_20251008_0600_981,arrived,1
+Poole_Jersey_20251008_1200_982,arrived,84
+Portsmouth_Jersey_20251009_1800_983,arrived,14
+Portsmouth_Jersey_20251009_1200_984,arrived,7
+St. Malo_Jersey_20251009_1800_985,arrived,6
+St. Malo_Jersey_20251009_1200_986,arrived,36
+Poole_Jersey_20251009_0600_987,arrived,7
+Poole_Jersey_20251009_1800_988,arrived,0
+Poole_Jersey_20251009_1200_989,arrived,88
+Portsmouth_Jersey_20251010_1800_990,arrived,23
+Portsmouth_Jersey_20251010_1200_991,arrived,8
+St. Malo_Jersey_20251010_0600_992,arrived,1
+St. Malo_Jersey_20251010_1200_993,arrived,10
+Poole_Jersey_20251010_1800_994,arrived,58
+Portsmouth_Jersey_20251011_0600_995,arrived,11
+Portsmouth_Jersey_20251011_1200_996,arrived,5
+St. Malo_Jersey_20251011_0600_997,arrived,9
+St. Malo_Jersey_20251011_1200_998,arrived,57
+St. Malo_Jersey_20251011_1800_999,arrived,6
+Poole_Jersey_20251011_1800_1000,arrived,86
+Poole_Jersey_20251011_0600_1001,arrived,8
+Poole_Jersey_20251011_1200_1002,arrived,45
+Portsmouth_Jersey_20251012_1200_1003,arrived,57
+Portsmouth_Jersey_20251012_0600_1004,arrived,13
+Portsmouth_Jersey_20251012_1800_1005,arrived,8
+St. Malo_Jersey_20251012_0600_1006,arrived,4
+St. Malo_Jersey_20251012_1200_1007,arrived,68
+St. Malo_Jersey_20251012_1800_1008,arrived,12
+Poole_Jersey_20251012_1800_1009,arrived,14
+Poole_Jersey_20251012_0600_1010,arrived,6
+Portsmouth_Jersey_20251013_0600_1011,arrived,7
+Portsmouth_Jersey_20251013_1200_1012,arrived,11
+St. Malo_Jersey_20251013_1800_1013,arrived,23
+St. Malo_Jersey_20251013_1200_1014,arrived,70
+St. Malo_Jersey_20251013_0600_1015,arrived,1
+Poole_Jersey_20251013_0600_1016,arrived,5
+Poole_Jersey_20251013_1800_1017,arrived,12
+Portsmouth_Jersey_20251014_1200_1018,arrived,2
+St. Malo_Jersey_20251014_1800_1019,arrived,12
+St. Malo_Jersey_20251014_1200_1020,arrived,45
+St. Malo_Jersey_20251014_0600_1021,arrived,5
+Poole_Jersey_20251014_0600_1022,arrived,82
+Poole_Jersey_20251014_1800_1023,arrived,5
+Portsmouth_Jersey_20251015_1200_1024,arrived,2
+Portsmouth_Jersey_20251015_0600_1025,arrived,12
+Portsmouth_Jersey_20251015_1800_1026,arrived,4
+St. Malo_Jersey_20251015_0600_1027,arrived,7
+St. Malo_Jersey_20251015_1800_1028,arrived,5
+St. Malo_Jersey_20251015_1200_1029,arrived,1
+Poole_Jersey_20251015_0600_1030,arrived,3
+Poole_Jersey_20251015_1200_1031,arrived,38
+Portsmouth_Jersey_20251016_1800_1032,arrived,43
+Portsmouth_Jersey_20251016_1200_1033,arrived,6
+Portsmouth_Jersey_20251016_0600_1034,arrived,13
+St. Malo_Jersey_20251016_1800_1035,arrived,9
+St. Malo_Jersey_20251016_0600_1036,arrived,8
+St. Malo_Jersey_20251016_1200_1037,arrived,2
+Poole_Jersey_20251016_0600_1038,arrived,13
+Portsmouth_Jersey_20251017_0600_1039,arrived,12
+Portsmouth_Jersey_20251017_1200_1040,arrived,11
+St. Malo_Jersey_20251017_0600_1041,arrived,14
+St. Malo_Jersey_20251017_1800_1042,arrived,83
+St. Malo_Jersey_20251017_1200_1043,arrived,69
+Poole_Jersey_20251017_1200_1044,arrived,35
+Poole_Jersey_20251017_1800_1045,arrived,6
+Portsmouth_Jersey_20251018_1800_1046,arrived,7
+Portsmouth_Jersey_20251018_0600_1047,arrived,0
+St. Malo_Jersey_20251018_1800_1048,arrived,11
+St. Malo_Jersey_20251018_1200_1049,arrived,5
+St. Malo_Jersey_20251018_0600_1050,arrived,12
+Poole_Jersey_20251018_1800_1051,arrived,9
+Poole_Jersey_20251018_1200_1052,arrived,5
+Portsmouth_Jersey_20251019_1800_1053,arrived,4
+St. Malo_Jersey_20251019_0600_1054,arrived,8
+St. Malo_Jersey_20251019_1200_1055,arrived,3
+Poole_Jersey_20251019_1200_1056,arrived,3
+Poole_Jersey_20251019_1800_1057,arrived,10
+Poole_Jersey_20251019_0600_1058,arrived,3
+Portsmouth_Jersey_20251020_0600_1059,arrived,25
+Portsmouth_Jersey_20251020_1800_1060,arrived,2
+St. Malo_Jersey_20251020_1800_1061,arrived,12
+St. Malo_Jersey_20251020_0600_1062,arrived,79
+Poole_Jersey_20251020_1200_1063,arrived,17
+Poole_Jersey_20251020_0600_1064,arrived,9
+Poole_Jersey_20251020_1800_1065,arrived,11
+Portsmouth_Jersey_20251021_1200_1066,arrived,12
+Portsmouth_Jersey_20251021_0600_1067,arrived,232
+Portsmouth_Jersey_20251021_1800_1068,arrived,25
+St. Malo_Jersey_20251021_1800_1069,arrived,0
+St. Malo_Jersey_20251021_0600_1070,arrived,59
+Poole_Jersey_20251021_1800_1071,arrived,49
+Poole_Jersey_20251021_1200_1072,arrived,9
+Portsmouth_Jersey_20251022_1200_1073,arrived,7
+Portsmouth_Jersey_20251022_0600_1074,arrived,8
+Portsmouth_Jersey_20251022_1800_1075,arrived,11
+St. Malo_Jersey_20251022_1800_1076,arrived,63
+St. Malo_Jersey_20251022_1200_1077,arrived,3
+St. Malo_Jersey_20251022_0600_1078,arrived,1
+Poole_Jersey_20251022_1800_1079,arrived,11
+Poole_Jersey_20251022_0600_1080,arrived,2
+Portsmouth_Jersey_20251023_0600_1081,arrived,34
+St. Malo_Jersey_20251023_1800_1082,arrived,17
+St. Malo_Jersey_20251023_1200_1083,arrived,8
+St. Malo_Jersey_20251023_0600_1084,arrived,7
+Poole_Jersey_20251023_0600_1085,arrived,5
+Poole_Jersey_20251023_1200_1086,arrived,7
+Portsmouth_Jersey_20251024_0600_1087,arrived,71
+Portsmouth_Jersey_20251024_1200_1088,arrived,2
+Portsmouth_Jersey_20251024_1800_1089,arrived,9
+St. Malo_Jersey_20251024_1800_1090,arrived,13
+St. Malo_Jersey_20251024_1200_1091,arrived,4
+St. Malo_Jersey_20251024_0600_1092,arrived,172
+Poole_Jersey_20251024_0600_1093,arrived,73
+Poole_Jersey_20251024_1200_1094,arrived,9
+Portsmouth_Jersey_20251025_0600_1095,arrived,7
+Portsmouth_Jersey_20251025_1200_1096,arrived,8
+St. Malo_Jersey_20251025_0600_1097,arrived,0
+St. Malo_Jersey_20251025_1800_1098,arrived,12
+Poole_Jersey_20251025_1200_1099,arrived,4
+Poole_Jersey_20251025_0600_1100,arrived,0
+Portsmouth_Jersey_20251026_1200_1101,arrived,8
+Portsmouth_Jersey_20251026_1800_1102,arrived,47
+Portsmouth_Jersey_20251026_0600_1103,arrived,10
+St. Malo_Jersey_20251026_1800_1104,arrived,8
+St. Malo_Jersey_20251026_0600_1105,arrived,26
+Poole_Jersey_20251026_1200_1106,arrived,9
+Poole_Jersey_20251026_0600_1107,cancelled,0
+Portsmouth_Jersey_20251027_0600_1108,arrived,8
+Portsmouth_Jersey_20251027_1800_1109,arrived,59
+St. Malo_Jersey_20251027_1200_1110,arrived,11
+St. Malo_Jersey_20251027_0600_1111,arrived,9
+Poole_Jersey_20251027_1800_1112,arrived,12
+Poole_Jersey_20251027_0600_1113,arrived,5
+Portsmouth_Jersey_20251028_1200_1114,arrived,14
+Portsmouth_Jersey_20251028_1800_1115,arrived,7
+St. Malo_Jersey_20251028_1200_1116,arrived,9
+Poole_Jersey_20251028_0600_1117,arrived,284
+Poole_Jersey_20251028_1200_1118,arrived,0
+Portsmouth_Jersey_20251029_1800_1119,arrived,26
+Portsmouth_Jersey_20251029_0600_1120,arrived,11
+Portsmouth_Jersey_20251029_1200_1121,arrived,63
+St. Malo_Jersey_20251029_1200_1122,arrived,2
+St. Malo_Jersey_20251029_0600_1123,arrived,71
+Poole_Jersey_20251029_1200_1124,arrived,4
+Poole_Jersey_20251029_1800_1125,arrived,7
+Poole_Jersey_20251029_0600_1126,arrived,13
+Portsmouth_Jersey_20251030_1200_1127,arrived,4
+Portsmouth_Jersey_20251030_0600_1128,arrived,40
+Portsmouth_Jersey_20251030_1800_1129,arrived,5
+St. Malo_Jersey_20251030_1800_1130,arrived,3
+St. Malo_Jersey_20251030_0600_1131,arrived,10
+Poole_Jersey_20251030_0600_1132,arrived,12
+Poole_Jersey_20251030_1800_1133,arrived,2
+Portsmouth_Jersey_20251031_0600_1134,arrived,10
+Portsmouth_Jersey_20251031_1800_1135,arrived,5
+Portsmouth_Jersey_20251031_1200_1136,arrived,10
+St. Malo_Jersey_20251031_1800_1137,arrived,10
+St. Malo_Jersey_20251031_1200_1138,arrived,0
+Poole_Jersey_20251031_1800_1139,arrived,0
+Poole_Jersey_20251031_1200_1140,arrived,74
+Poole_Jersey_20251031_0600_1141,arrived,0
+Portsmouth_Jersey_20251101_1200_1142,arrived,11
+Portsmouth_Jersey_20251101_1800_1143,arrived,88
+Portsmouth_Jersey_20251101_0600_1144,arrived,11
+St. Malo_Jersey_20251101_1200_1145,arrived,86
+St. Malo_Jersey_20251101_0600_1146,arrived,16
+Poole_Jersey_20251101_1800_1147,arrived,1
+Poole_Jersey_20251101_1200_1148,arrived,6
+Poole_Jersey_20251101_0600_1149,arrived,13
+Portsmouth_Jersey_20251102_1200_1150,arrived,26
+Portsmouth_Jersey_20251102_0600_1151,arrived,31
+Portsmouth_Jersey_20251102_1800_1152,arrived,5
+St. Malo_Jersey_20251102_1200_1153,arrived,280
+St. Malo_Jersey_20251102_1800_1154,arrived,5
+St. Malo_Jersey_20251102_0600_1155,arrived,80
+Poole_Jersey_20251102_1800_1156,arrived,7
+Poole_Jersey_20251102_0600_1157,arrived,5
+Poole_Jersey_20251102_1200_1158,arrived,1
+Portsmouth_Jersey_20251103_1800_1159,arrived,14
+Portsmouth_Jersey_20251103_1200_1160,arrived,1
+Portsmouth_Jersey_20251103_0600_1161,arrived,19
+St. Malo_Jersey_20251103_1800_1162,arrived,86
+St. Malo_Jersey_20251103_1200_1163,arrived,76
+St. Malo_Jersey_20251103_0600_1164,arrived,1
+Poole_Jersey_20251103_0600_1165,arrived,11
+Poole_Jersey_20251103_1800_1166,arrived,3
+Portsmouth_Jersey_20251104_0600_1167,arrived,77
+Portsmouth_Jersey_20251104_1200_1168,arrived,12
+Portsmouth_Jersey_20251104_1800_1169,arrived,89
+St. Malo_Jersey_20251104_0600_1170,arrived,5
+St. Malo_Jersey_20251104_1200_1171,arrived,10
+Poole_Jersey_20251104_1200_1172,arrived,82
+Poole_Jersey_20251104_0600_1173,arrived,14
+Portsmouth_Jersey_20251105_1200_1174,arrived,13
+Portsmouth_Jersey_20251105_1800_1175,arrived,39
+Portsmouth_Jersey_20251105_0600_1176,arrived,31
+St. Malo_Jersey_20251105_1200_1177,arrived,148
+Poole_Jersey_20251105_1200_1178,arrived,5
+Poole_Jersey_20251105_1800_1179,arrived,11
+Poole_Jersey_20251105_0600_1180,arrived,11
+Portsmouth_Jersey_20251106_0600_1181,arrived,9
+Portsmouth_Jersey_20251106_1200_1182,arrived,7
+Portsmouth_Jersey_20251106_1800_1183,arrived,6
+St. Malo_Jersey_20251106_0600_1184,arrived,14
+St. Malo_Jersey_20251106_1800_1185,arrived,11
+St. Malo_Jersey_20251106_1200_1186,arrived,13
+Poole_Jersey_20251106_0600_1187,arrived,58
+Poole_Jersey_20251106_1800_1188,arrived,2
+Poole_Jersey_20251106_1200_1189,arrived,8
+Portsmouth_Jersey_20251107_1200_1190,arrived,12
+Portsmouth_Jersey_20251107_0600_1191,arrived,11
+Portsmouth_Jersey_20251107_1800_1192,arrived,64
+St. Malo_Jersey_20251107_1800_1193,arrived,0
+St. Malo_Jersey_20251107_1200_1194,arrived,13
+Poole_Jersey_20251107_1800_1195,arrived,12
+Poole_Jersey_20251107_1200_1196,arrived,14
+Portsmouth_Jersey_20251108_1200_1197,arrived,14
+Portsmouth_Jersey_20251108_0600_1198,arrived,52
+Portsmouth_Jersey_20251108_1800_1199,arrived,10
+St. Malo_Jersey_20251108_1200_1200,arrived,33
+Poole_Jersey_20251108_1200_1201,arrived,7
+Poole_Jersey_20251108_1800_1202,arrived,42
+Portsmouth_Jersey_20251109_0600_1203,arrived,9
+Portsmouth_Jersey_20251109_1200_1204,arrived,14
+Portsmouth_Jersey_20251109_1800_1205,arrived,3
+St. Malo_Jersey_20251109_1800_1206,arrived,213
+St. Malo_Jersey_20251109_0600_1207,arrived,59
+Poole_Jersey_20251109_0600_1208,arrived,2
+Poole_Jersey_20251109_1200_1209,arrived,58
+Portsmouth_Jersey_20251110_1800_1210,cancelled,0
+Portsmouth_Jersey_20251110_1200_1211,arrived,55
+Portsmouth_Jersey_20251110_0600_1212,arrived,13
+St. Malo_Jersey_20251110_1800_1213,arrived,52
+St. Malo_Jersey_20251110_0600_1214,arrived,12
+Poole_Jersey_20251110_1200_1215,arrived,12
+Poole_Jersey_20251110_1800_1216,arrived,14
+Portsmouth_Jersey_20251111_0600_1217,arrived,2
+Portsmouth_Jersey_20251111_1200_1218,arrived,4
+Portsmouth_Jersey_20251111_1800_1219,arrived,79
+St. Malo_Jersey_20251111_0600_1220,arrived,55
+Poole_Jersey_20251111_1200_1221,arrived,228
+Portsmouth_Jersey_20251112_0600_1222,arrived,13
+St. Malo_Jersey_20251112_0600_1223,arrived,2
+St. Malo_Jersey_20251112_1200_1224,arrived,14
+Poole_Jersey_20251112_0600_1225,arrived,3
+Poole_Jersey_20251112_1200_1226,arrived,56
+Portsmouth_Jersey_20251113_1200_1227,arrived,9
+Portsmouth_Jersey_20251113_1800_1228,arrived,4
+St. Malo_Jersey_20251113_1800_1229,arrived,2
+St. Malo_Jersey_20251113_0600_1230,arrived,0
+Poole_Jersey_20251113_1200_1231,arrived,12
+Poole_Jersey_20251113_0600_1232,arrived,0
+Poole_Jersey_20251113_1800_1233,arrived,7
+Portsmouth_Jersey_20251114_0600_1234,arrived,13
+St. Malo_Jersey_20251114_1800_1235,arrived,23
+St. Malo_Jersey_20251114_1200_1236,arrived,8
+Poole_Jersey_20251114_0600_1237,arrived,7
+Poole_Jersey_20251114_1200_1238,arrived,6
+Portsmouth_Jersey_20251115_0600_1239,arrived,5
+Portsmouth_Jersey_20251115_1800_1240,arrived,2
+St. Malo_Jersey_20251115_1200_1241,arrived,8
+St. Malo_Jersey_20251115_0600_1242,arrived,2
+Poole_Jersey_20251115_1800_1243,arrived,43
+Portsmouth_Jersey_20251116_1800_1244,arrived,265
+Portsmouth_Jersey_20251116_0600_1245,arrived,1
+St. Malo_Jersey_20251116_1200_1246,arrived,12
+St. Malo_Jersey_20251116_1800_1247,arrived,293
+St. Malo_Jersey_20251116_0600_1248,arrived,10
+Poole_Jersey_20251116_1200_1249,arrived,77
+Poole_Jersey_20251116_0600_1250,arrived,78
+Portsmouth_Jersey_20251117_1200_1251,arrived,11
+Portsmouth_Jersey_20251117_1800_1252,arrived,14
+St. Malo_Jersey_20251117_1800_1253,arrived,9
+St. Malo_Jersey_20251117_1200_1254,arrived,2
+Poole_Jersey_20251117_1800_1255,arrived,4
+Poole_Jersey_20251117_1200_1256,arrived,7
+Poole_Jersey_20251117_0600_1257,arrived,0
+Portsmouth_Jersey_20251118_1800_1258,arrived,14
+Portsmouth_Jersey_20251118_0600_1259,arrived,14
+Portsmouth_Jersey_20251118_1200_1260,arrived,11
+St. Malo_Jersey_20251118_1200_1261,arrived,12
+St. Malo_Jersey_20251118_0600_1262,arrived,6
+Poole_Jersey_20251118_0600_1263,arrived,8
+Poole_Jersey_20251118_1800_1264,arrived,1
+Poole_Jersey_20251118_1200_1265,arrived,13
+Portsmouth_Jersey_20251119_1200_1266,arrived,3
+Portsmouth_Jersey_20251119_0600_1267,arrived,11
+St. Malo_Jersey_20251119_1200_1268,arrived,80
+St. Malo_Jersey_20251119_0600_1269,arrived,6
+Poole_Jersey_20251119_1800_1270,arrived,54
+Poole_Jersey_20251119_1200_1271,arrived,14
+Portsmouth_Jersey_20251120_0600_1272,arrived,1
+Portsmouth_Jersey_20251120_1800_1273,arrived,9
+St. Malo_Jersey_20251120_1800_1274,arrived,5
+St. Malo_Jersey_20251120_0600_1275,arrived,58
+Poole_Jersey_20251120_1800_1276,arrived,11
+Poole_Jersey_20251120_1200_1277,arrived,9
+Portsmouth_Jersey_20251121_0600_1278,arrived,4
+Portsmouth_Jersey_20251121_1200_1279,arrived,7
+St. Malo_Jersey_20251121_0600_1280,arrived,9
+St. Malo_Jersey_20251121_1800_1281,arrived,86
+St. Malo_Jersey_20251121_1200_1282,arrived,6
+Poole_Jersey_20251121_1800_1283,arrived,9
