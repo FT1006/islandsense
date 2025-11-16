@@ -118,6 +118,20 @@ islandsense/
 
 Weekly score is the average of daily risk scores.
 
+## Physics-Aware Features
+
+Our model uses simple, interpretable features that match what captains actually consider:
+
+- **WOTDI (Wind-On-Track Direction Index)**: How badly the wind is pushing the ship off its intended direction. Side-winds cause roll and approach difficulty. Higher WOTDI = more cross-wind exposure = higher disruption risk.
+
+- **BSEF (Beam-Sea Exposure Factor)**: How badly the waves are hitting the ship from the side. Sideways waves cause aggressive rolling, often forcing cancellations.
+
+- **Gust Max 3h**: Worst wind gust in the last 3 hours. Captures sudden spikes that pilots really care about when making go/no-go decisions.
+
+- **Tide Gate Margin**: Time buffer before the tide closes the port. Low margins mean less flexibility if conditions deteriorate.
+
+These physics-aware features make the model's predictions interpretable and credible to maritime operators.
+
 ## Scenarios
 
 - **Optimized**: Forward ship 10% of cargo on lower-risk sailings
