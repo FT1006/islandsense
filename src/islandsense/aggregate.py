@@ -388,6 +388,49 @@ def compute_sailing_contributions(df: pd.DataFrame) -> pd.DataFrame:
     return contrib_df
 
 
+def count_red_days(daily_risk_df: pd.DataFrame) -> Dict[str, int]:
+    """Count number of days with red band (risk >= 70) per category.
+
+    Args:
+        daily_risk_df: DataFrame with category, band columns
+
+    Returns:
+        Dict mapping category to count of red days
+    """
+    red_counts = {}
+    for category in ["fresh", "fuel"]:
+        cat_df = daily_risk_df[daily_risk_df["category"] == category]
+        red_count = (cat_df["band"] == "red").sum()
+        red_counts[category] = int(red_count)
+    return red_counts
+
+
+def compute_sailing_scenario_deltas(
+    sailing_contrib_df: pd.DataFrame, scenario_config: Dict
+) -> pd.DataFrame:
+    """Compute per-sailing contribution deltas under a scenario.
+
+    Baseline contrib = p_sail * units
+    Scenario contrib = p_sail * units * (1 - alpha)
+    Delta = baseline - scenario = p_sail * units * alpha
+
+    Args:
+        sailing_contrib_df: DataFrame with contrib_fresh, contrib_fuel
+        scenario_config: Scenario definition with alpha per category
+
+    Returns:
+        DataFrame with delta_fresh, delta_fuel columns added
+    """
+    df = sailing_contrib_df.copy()
+    alphas = scenario_config["alpha"]
+
+    # Delta = baseline contrib * alpha (reduction due to scenario)
+    df["delta_fresh"] = df["contrib_fresh"] * alphas.get("fresh", 0.0)
+    df["delta_fuel"] = df["contrib_fuel"] * alphas.get("fuel", 0.0)
+
+    return df
+
+
 def aggregate(
     predictions_path: Path = Path("per_sailing_predictions.csv"),
     output_dir: Path = Path("data"),
@@ -474,6 +517,8 @@ def aggregate(
     scenario_results = {}
     weekly_risks = {"baseline": weekly_baseline}
     impacts = {}
+    red_days_by_scenario = {"baseline": count_red_days(daily_risk_df)}
+    sailing_deltas_by_scenario = {}
 
     for scenario_config in config.scenarios:
         scenario_id = scenario_config["id"]
@@ -498,6 +543,29 @@ def aggregate(
             f"    Fuel  ΔE_loss: {impact['fuel']['delta_e_loss']:.2f} units "
             f"(before units_per_trailer)"
         )
+
+        # Count red days under scenario
+        red_days_scenario = count_red_days(
+            scenario_df.assign(
+                band=lambda x: x.apply(
+                    lambda row: get_band(row["risk_scenario"], config.risk_bands),
+                    axis=1,
+                )
+            )
+        )
+        red_days_by_scenario[scenario_id] = red_days_scenario
+        print(
+            f"    Red days Fresh: {red_days_by_scenario['baseline']['fresh']} → {red_days_scenario['fresh']}"
+        )
+        print(
+            f"    Red days Fuel: {red_days_by_scenario['baseline']['fuel']} → {red_days_scenario['fuel']}"
+        )
+
+        # Compute per-sailing deltas
+        sailing_deltas = compute_sailing_scenario_deltas(
+            compute_sailing_contributions(df), scenario_config
+        )
+        sailing_deltas_by_scenario[scenario_id] = sailing_deltas
 
         scenario_results[scenario_id] = scenario_df
         weekly_risks[scenario_id] = weekly_risk
@@ -545,6 +613,8 @@ def aggregate(
                 - weekly_risks[scenario_id][category],
                 "hours_avoided": impacts[scenario_id][category]["hours_avoided"],
                 "trailers_avoided": impacts[scenario_id][category]["trailers_avoided"],
+                "red_days_baseline": red_days_by_scenario["baseline"][category],
+                "red_days_scenario": red_days_by_scenario[scenario_id][category],
             }
             impact_rows.append(row)
 
@@ -555,6 +625,23 @@ def aggregate(
     sailing_contrib_df = compute_sailing_contributions(df)
     print(f"4. sailing_contrib.csv: {len(sailing_contrib_df)} rows")
 
+    # 5. sailing_scenario_deltas.csv (per-sailing deltas for each scenario)
+    sailing_delta_rows = []
+    for scenario_config in config.scenarios:
+        scenario_id = scenario_config["id"]
+        deltas_df = sailing_deltas_by_scenario[scenario_id]
+        deltas_df = deltas_df.copy()
+        deltas_df["scenario_id"] = scenario_id
+        sailing_delta_rows.append(deltas_df)
+
+    sailing_scenario_deltas_df = pd.concat(sailing_delta_rows, ignore_index=True)
+    # Reorder columns to put scenario_id first
+    cols = ["scenario_id"] + [
+        c for c in sailing_scenario_deltas_df.columns if c != "scenario_id"
+    ]
+    sailing_scenario_deltas_df = sailing_scenario_deltas_df[cols]
+    print(f"5. sailing_scenario_deltas.csv: {len(sailing_scenario_deltas_df)} rows")
+
     # Save outputs
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -563,6 +650,9 @@ def aggregate(
     weekly_risk_df.to_csv(output_dir / "weekly_risk.csv", index=False)
     scenario_impact_df.to_csv(output_dir / "scenario_impact.csv", index=False)
     sailing_contrib_df.to_csv(output_dir / "sailing_contrib.csv", index=False)
+    sailing_scenario_deltas_df.to_csv(
+        output_dir / "sailing_scenario_deltas.csv", index=False
+    )
 
     print(f"\n✓ All CSVs written to {output_dir}/")
 
@@ -571,6 +661,7 @@ def aggregate(
         "weekly_risk": weekly_risk_df,
         "scenario_impact": scenario_impact_df,
         "sailing_contrib": sailing_contrib_df,
+        "sailing_scenario_deltas": sailing_scenario_deltas_df,
     }
 
 

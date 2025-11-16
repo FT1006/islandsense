@@ -23,6 +23,8 @@ from islandsense.aggregate import (
     compute_impact,
     compute_sailing_contributions,
     ensure_full_grid,
+    count_red_days,
+    compute_sailing_scenario_deltas,
 )
 
 
@@ -529,3 +531,123 @@ class TestEnsureFullGrid:
         # Should have all day indices 0-6
         assert set(result["day_index"]) == {0, 1, 2, 3, 4, 5, 6}
         assert len(result) == 14  # 7 days * 2 categories
+
+
+# 9. test_count_red_days
+
+
+class TestCountRedDays:
+    def test_counts_red_band_correctly(self):
+        """Should count days where band == 'red' per category."""
+        daily_risk_df = pd.DataFrame(
+            {
+                "category": ["fresh", "fresh", "fresh", "fuel", "fuel", "fuel"],
+                "band": ["green", "red", "red", "amber", "red", "green"],
+            }
+        )
+
+        result = count_red_days(daily_risk_df)
+
+        assert result["fresh"] == 2  # Two red days for fresh
+        assert result["fuel"] == 1  # One red day for fuel
+
+    def test_no_red_days(self):
+        """Should return 0 when no red days."""
+        daily_risk_df = pd.DataFrame(
+            {
+                "category": ["fresh", "fresh", "fuel", "fuel"],
+                "band": ["green", "amber", "green", "amber"],
+            }
+        )
+
+        result = count_red_days(daily_risk_df)
+
+        assert result["fresh"] == 0
+        assert result["fuel"] == 0
+
+    def test_all_red_days(self):
+        """Should count all days when all are red."""
+        daily_risk_df = pd.DataFrame(
+            {
+                "category": ["fresh", "fresh", "fuel", "fuel"],
+                "band": ["red", "red", "red", "red"],
+            }
+        )
+
+        result = count_red_days(daily_risk_df)
+
+        assert result["fresh"] == 2
+        assert result["fuel"] == 2
+
+
+# 10. test_compute_sailing_scenario_deltas
+
+
+class TestComputeSailingScenarioDeltas:
+    def test_delta_equals_contrib_times_alpha(self):
+        """Delta should be contrib * alpha (reduction from baseline)."""
+        sailing_contrib_df = pd.DataFrame(
+            {
+                "sailing_id": ["S1", "S2"],
+                "contrib_fresh": [10.0, 20.0],
+                "contrib_fuel": [5.0, 15.0],
+            }
+        )
+
+        scenario_config = {
+            "id": "scenario_A",
+            "alpha": {"fresh": 0.2, "fuel": 0.1},  # 20% fresh, 10% fuel reduction
+        }
+
+        result = compute_sailing_scenario_deltas(sailing_contrib_df, scenario_config)
+
+        # S1: delta_fresh = 10 * 0.2 = 2.0, delta_fuel = 5 * 0.1 = 0.5
+        # S2: delta_fresh = 20 * 0.2 = 4.0, delta_fuel = 15 * 0.1 = 1.5
+        assert result.iloc[0]["delta_fresh"] == 2.0
+        assert result.iloc[0]["delta_fuel"] == 0.5
+        assert result.iloc[1]["delta_fresh"] == 4.0
+        assert result.iloc[1]["delta_fuel"] == 1.5
+
+    def test_preserves_original_columns(self):
+        """Should keep all original columns plus add delta columns."""
+        sailing_contrib_df = pd.DataFrame(
+            {
+                "sailing_id": ["S1"],
+                "day_index": [0],
+                "route": ["Poole→Jersey"],
+                "contrib_fresh": [10.0],
+                "contrib_fuel": [5.0],
+            }
+        )
+
+        scenario_config = {"id": "A", "alpha": {"fresh": 0.1, "fuel": 0.1}}
+
+        result = compute_sailing_scenario_deltas(sailing_contrib_df, scenario_config)
+
+        # Original columns preserved
+        assert "sailing_id" in result.columns
+        assert "day_index" in result.columns
+        assert "route" in result.columns
+        assert "contrib_fresh" in result.columns
+        assert "contrib_fuel" in result.columns
+
+        # New delta columns added
+        assert "delta_fresh" in result.columns
+        assert "delta_fuel" in result.columns
+
+    def test_zero_alpha_means_no_delta(self):
+        """If alpha is 0, delta should be 0 (no reduction)."""
+        sailing_contrib_df = pd.DataFrame(
+            {
+                "sailing_id": ["S1"],
+                "contrib_fresh": [10.0],
+                "contrib_fuel": [5.0],
+            }
+        )
+
+        scenario_config = {"id": "B", "alpha": {"fresh": 0.0, "fuel": 0.0}}
+
+        result = compute_sailing_scenario_deltas(sailing_contrib_df, scenario_config)
+
+        assert result.iloc[0]["delta_fresh"] == 0.0
+        assert result.iloc[0]["delta_fuel"] == 0.0
